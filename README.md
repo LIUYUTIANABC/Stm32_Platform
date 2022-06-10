@@ -42,3 +42,4 @@ ST中文网：www.stmcu.com.cn
 - 参考网址：https://blog.csdn.net/qq_20222919/article/details/109099872
 - 进入ST官方论坛：https://www.stmcu.org.cn/
 - 资料 - 中文译文
+- 一些教学网站下载资料
