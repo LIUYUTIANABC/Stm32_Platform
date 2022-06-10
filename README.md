@@ -30,5 +30,15 @@ ST中文网：www.stmcu.com.cn
 - 开发工具： STM32CubeMX， Keil(MDK-ARM), IAR for ARM
 - 烧录软件：STM32 ST-LINK Utility
 
+什么是 Keil(MDK-ARM)？
 
-什么是 MDK？ 怎么下载中文资料？
+- 使用 keil 开发stm32的项目，
+- keil4 是内部集成的芯片包，keil5 需要下载芯片包
+- keil4 开发51单片机，keil5 + pack 开发Arm内核的 stm32 程序
+- 安装 pack 直接双击打开，默认会选择 keil5 的路径
+
+怎么下载中文资料？
+
+- 参考网址：https://blog.csdn.net/qq_20222919/article/details/109099872
+- 进入ST官方论坛：https://www.stmcu.org.cn/
+- 资料 - 中文译文
