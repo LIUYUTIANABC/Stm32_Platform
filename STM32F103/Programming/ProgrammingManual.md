@@ -1,7 +1,7 @@
 ## 如何下载程序到 STM32F103C8
 
-- 使用串口
-- 使用 ISP
+- 使用串口 FlyMcu
+- 使用 ISP(PZ-ISP)
 - 使用 SWD 下载程序
 - 使用 ST-Link
 - 使用普中 STM32 仿真，CMSIS-DAP
@@ -69,6 +69,24 @@ ST-Link，J-Link，U-Link 是硬件设备，是一种实际调试工具
 - ST-Link-V2 专门针对ST公司的 STM8 和 STM32 系列芯片的仿真器
   - 可以使用接口：SWIM，SWD，JTAG
   - 可以在线调试和下载
+
+## ST-Link 的版本，及其差异
+
+参考网址：
+
+- https://blog.csdn.net/ybhuangfugui/article/details/88266399
+
+|                             |                                                |
+| --------------------------- | ---------------------------------------------- |
+| ST-LinK                     | ![img](./img/2022-06-22_181050_ST-Link_V1.jpg) |
+| ST-LinK/V2; ST-Link/V2-ISOL | ![img](./img/2022-06-22_181208_ST-Link_V2.jpg) |
+| ST-LinK/V3                  | ![img](./img/2022-06-22_181243_ST-Link_V3.jpg) |
+
+- ST-LinK: 老产品，目前使用不多
+- ST-LinK/V2: ST-Link/V2-ISOL：使用较多
+  - ST-LinK/V2：价格便宜，有许多山寨的，使用比较多
+  - ST-Link/V2-ISOL：带 1000V 隔离，这一版本价格贵
+- ST-LinK/V3：功能更强大
 
 ## 使用串口下载 SMT32F103 程序
 
