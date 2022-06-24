@@ -93,8 +93,21 @@ ST-Link，J-Link，U-Link 是硬件设备，是一种实际调试工具
 参考网址：
 
 - https://blog.csdn.net/ybhuangfugui/article/details/105020908
+- https://www.amobbs.com/thread-5761725-1-1.html
 
+市面上常见的下载调试器有：J-Link，ST-Link，还有一种 CMSIS-DAP Debugger
 
+- CMSIS：Cortex Microcontroller Software Interface Standard，即Cortex微控制器软件接口标准
+- DAP：Debug Access Port，调试访问端口
+
+CMSIS-DAP 调试器是 Cortex-M MCU 内部封装的用于的调试的标准化接口，可以调试和追踪代码
+
+- CMSIS-DAP 固件是以源码形式提供，软件硬件都是开源的
+
+|                                                         |                                               |
+| ------------------------------------------------------- | --------------------------------------------- |
+| CMSIS-DAP 内部示意图                                    | ![img](./img/2022-06-24_190758_CMSIS-DAP.jpg) |
+| JTAG，SWD以及串口都是通过这个 Cortex接口标准调试 MCU 的 | ![img](./img/2022-06-24_191428_JTAG_SWD.jpg)  |
 
 ## 使用串口下载 SMT32F103 程序
 
