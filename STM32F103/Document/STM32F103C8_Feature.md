@@ -109,3 +109,19 @@ ARM 公司本身定义了一个 4G 的存储器，用来更好的扩展；4G 空
   - 上下拉电阻无影响，不会影响模拟信号
   - 双 MOS 管关闭，施密特触发器关闭，上下拉电阻禁用
   - 只有模拟通道进行输入输出
+
+#### startup_stm32f10x_hd.s 文件介绍
+
+- SystemInit(); 是启动文件包含的，必须存在
+  - 一般初始化 STM32 芯片的时钟，包括 AHB、APB 等总线的时钟
+  - 系统上电会先执行 SystemInit() 设置时钟，再进入 main() 执行代码
+
+#### Keil 编译后 Flash 和 SRAM 大小
+
+STM32F03C8 的 Flash 是 64K 字节; SRAM 是 20K 字节；
+Flash 大小 = Code + RO-data 对应的单位是字节；SRAM 大小 = RW-datata 对应的单位是字节
+
+- Code：表示程序所占用 FLASH 的大小
+- RO-data：即 Read Only-data，表示程序定义的常量，存储在 FLASH 内
+- RW-data：即 Read Write-data，表示已被初始化的变量，存储在 SRAM 内
+- ZI-data：即 Zero Init-data，表示未被初始化的变量，存储在 SRAM 内
