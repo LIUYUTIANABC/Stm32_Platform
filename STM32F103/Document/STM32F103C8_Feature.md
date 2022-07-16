@@ -82,7 +82,7 @@ ARM 公司本身定义了一个 4G 的存储器，用来更好的扩展；4G 空
   - 需要定义一个方法 SystemInit(); 因为启动文件 startup_stm32f10x_hd.s 是先从 SystemInit 方法启动的；
 - 最简易的工程就创建完了
 
-### GPIO 知识点补充
+#### GPIO 知识点补充
 
 - IO口输出端保护二极管
   - 如果外部电压高，则 VDD 导通；
@@ -125,3 +125,20 @@ Flash 大小 = Code + RO-data 对应的单位是字节；SRAM 大小 = RW-datata
 - RO-data：即 Read Only-data，表示程序定义的常量，存储在 FLASH 内
 - RW-data：即 Read Write-data，表示已被初始化的变量，存储在 SRAM 内
 - ZI-data：即 Zero Init-data，表示未被初始化的变量，存储在 SRAM 内
+
+### 使用库函数模板
+
+CMSIS：Cortex MicroController Software Interface Standard，Cortex微控制器软件接口标准
+
+- CMSIS 处于中间层，向上提供函数接口由用户调用，向下负责内核和其他外设通信
+- 使用 CMSIS-Mx 内核的芯片不只有 STM32，所以这套标准是为了统一接口
+- 这套标准被 STM 公司封装到 STM32 固件库中，用户使用固件库操作 CMSIS
+
+#### 固件库的文件夹介绍
+
+- Libraries：存放的是源文件
+  - CMSIS: 存放 ARM CMSIS 的内核文件，STM32 启动文件，对应外设头文件 stm32f10x.h
+  - STM32F10x_StdPeriph_Driver: 存放 STM32 外设驱动文件
+    - inc：外设头文件
+    - src：外设源文件
+    -
