@@ -196,3 +196,10 @@ STM32F103C8T6 是中容量的芯片，理论上启动文件应该是 startup_stm
   - 堆的生长方式是由低向高
   - 类似于数据结构的链表
 
+### 时钟树的一些知识点
+
+- SysTick 是 SYSCLK 通过 8 分频后送给 Cortex 系统定时器 SysTick
+- APB1 挂接的是低速外设； APB2 挂接的是高速外设
+  - APB2 最大 72MHX：UART1、 SPI1、 Timer1、 ADC1、 ADC2、GPIO等
+  - APB1 最大 36MHZ：电源接口、备份接口、CAN、USB、I2C1、I2C2、UART2、UART3等
+  - 注意：Timer1，Timer2，Timer3 如果分频不是 1；时钟会自动 *2
