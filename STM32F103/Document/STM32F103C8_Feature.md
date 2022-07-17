@@ -179,7 +179,7 @@ STM32F103C8T6 是中容量的芯片，理论上启动文件应该是 startup_stm
 
 - 在文件 system_stm32f10x.c 中已经定义了 SystemInit() 函数，用来定义系统时钟
 
-启动文件（startup_stm32f10x_md.s）的介绍：
+#### 启动文件（startup_stm32f10x_md.s）的介绍
 
 启动文件分配栈空间和堆空间，和 SystemInit() 和 main()
 

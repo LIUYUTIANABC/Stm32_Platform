@@ -427,10 +427,27 @@
               <FileType>1</FileType>
               <FilePath>.\App\RegisterTemplate.c</FilePath>
             </File>
+            <File>
+              <FileName>led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\App\led.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>StdPeriph_Driver</GroupName>
+          <Files>
+            <File>
+              <FileName>stm32f10x_rcc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_rcc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_gpio.c</FilePath>
+            </File>
+          </Files>
         </Group>
       </Groups>
     </Target>
