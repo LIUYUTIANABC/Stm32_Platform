@@ -141,4 +141,58 @@ CMSIS：Cortex MicroController Software Interface Standard，Cortex微控制器�
   - STM32F10x_StdPeriph_Driver: 存放 STM32 外设驱动文件
     - inc：外设头文件
     - src：外设源文件
-    -
+- Project：存放官方的固件程例
+  - STM32F10x_StdPeriph_Examples：ST 公司提供的外设驱动例程
+  - STM32F10x_StdPeriph_Templates：固件库工程模板
+- STM32F10x_StdPeriph_Templates：固件库帮助文档
+
+#### 文件介绍
+
+![img](./img/2022-07-17_161954_Lib_dimgram.png)
+
+- stm32f10x.h 这个是芯片头文件，存放总线，内存，外设寄存器等
+  - 包含 core_m3.h: CMSIS 核心文件，是 M3 内核的驱动（\Libraries\CMSIS\CM3\CoreSupport）
+  - 包含 system_stm32f10x.h， system_stm32f10x.c: 是系统的总线时钟和 SystemInit() 函数声明（\Libraries\CMSIS\CM3\CoreSupport）
+- startup_stm32f10x_hd.s: 启动文件,放堆栈大小，中断入口等（Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\arm）
+- stm32f10x_it.c，stm32f10x_it.h：存放中断函数，一般把中断函数放到，别的地方（Project\STM32F10x_StdPeriph_Template）
+- stm32f10x_conf.h: 配置文件，删减外设头文件（Project\STM32F10x_StdPeriph_Template）
+- main.c: 主函数
+
+#### 魔术棒的配置
+
+STM32为什么要在C/C++配置里写STM32F10X_HD,USE_STDPERIPH_DRIVER详解
+
+- 参考网址： https://blog.csdn.net/wzx104104104/article/details/106327107
+- 宏定义 USE_STDPERIPH_DRIVER： 用来设置是否使用 stm32f10x_conf.h
+  - 之前，在 main() 中没有包含外设头文件，但是编译过后有包含就是因为这个宏定义
+- 宏定义 STM32F10X_HD： 定义芯片的类型，高容量，中容量等
+  - 这个宏定义，可以选择不同的外设中断函数
+
+STM32F103C8T6 是中容量的芯片，理论上启动文件应该是 startup_stm32f10x_md.s
+
+- 如果使用 startup_stm32f10x_hd.s 文件，会报错
+  - 应该修改宏定义 STM32F10X_HD -> STM32F10X_MD
+  - 或者直接删除宏定义 STM32F10X_HD
+- 最正确的应该是使用 startup_stm32f10x_md.s 并且修改宏定义 STM32F10X_MD
+
+不能有两个 SystemInit() 函数
+
+- 在文件 system_stm32f10x.c 中已经定义了 SystemInit() 函数，用来定义系统时钟
+
+启动文件（startup_stm32f10x_md.s）的介绍：
+
+启动文件分配栈空间和堆空间，和 SystemInit() 和 main()
+
+- 栈： 程序开头分配的是栈空间 Stack
+  - Stack_Size: 0x00000400 = 1KB 的空间
+  - 栈的大小不能超过内部 RAM 大小，STM32F03C8 的 RAM = 20KB
+  - 栈主要存放函数的参数值，局部变量的值
+  - 如果程序中局部变量使用较多，可能会导致栈溢出，出现莫名奇怪的错误
+  - 通常可以改栈值，使栈空间更大一些
+  - 栈的生长方式由高到低
+- 堆： Heap_Size: 0x00000200 = 512B
+  - 堆一般由程序员分配和释放
+  - 程序结束可由操作系统回收
+  - 堆的生长方式是由低向高
+  - 类似于数据结构的链表
+

@@ -14,6 +14,16 @@
 #define RCC_APB2ENR *(unsigned int *)(RCC_BASE + 0x18)
 
 /*************************************************************************
+ * Name: SystemInit
+ * Function: Set System clock and AHB¡¢APB clock
+ * Input:
+ * Output:
+ *************************************************************************/
+// void SystemInit()
+// {
+// }
+
+/*************************************************************************
  * Name: Reg_Delay
  * Function:
  * Input:

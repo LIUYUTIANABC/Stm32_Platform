@@ -1,17 +1,7 @@
 #include "stm32f10x.h"
 #include "RegisterTemplate.h"
 
-#define REGISTER_LED_FEATURE
-
-/*************************************************************************
- * Name: SystemInit
- * Function: Set System clock and AHB、APB clock
- * Input:
- * Output:
- *************************************************************************/
-void SystemInit()
-{
-}
+#undef REGISTER_LED_FEATURE
 
 /*************************************************************************
  * Name: main
