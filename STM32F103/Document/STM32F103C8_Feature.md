@@ -203,3 +203,49 @@ STM32F103C8T6 是中容量的芯片，理论上启动文件应该是 startup_stm
   - APB2 最大 72MHX：UART1、 SPI1、 Timer1、 ADC1、 ADC2、GPIO等
   - APB1 最大 36MHZ：电源接口、备份接口、CAN、USB、I2C1、I2C2、UART2、UART3等
   - 注意：Timer1，Timer2，Timer3 如果分频不是 1；时钟会自动 *2
+
+SystemInit 函数的介绍
+
+- STM32F103 上电的复位之后，默认使用 HSI 作为系统时钟
+- 然后设置相关寄存器切换成 HSE 作为系统时钟
+  - 如果，外部晶振开启成功，则 HSE 作为系统时钟
+  - 如果，外部晶振开启失败，则 HSI 作为系统时钟
+- 可以修改宏定义 HSE_VALUE 修改对应的板子上外部晶振的频率值
+  - 最小系统板上面的外部晶振也是 8MHZ，所以这里不用修改
+- system_stm32f10x.c 中定义了宏 SYSCLK_FREQ_72MHz，即默认系统时钟是 72MHZ
+  - SYSCLK（系统时钟） =72MHz
+  - AHB 总线时钟(HCLK=SYSCLK) =72MHz
+  - APB1 总线时钟(PCLK1=SYSCLK/2) =36MHz
+  - APB2 总线时钟(PCLK2=SYSCLK/1) =72MHz
+  - PLL 主时钟 =72MHz
+
+#### stm32f10x_rcc.c 用来使能时钟
+
+时钟函数大致分为三类：
+
+- 外设时钟使能
+  - void RCC_AHBPeriphClockCmd(uint32_t RCC_AHBPeriph, FunctionalState NewState);
+  - void RCC_APB2PeriphClockCmd(uint32_t RCC_APB2Periph, FunctionalState NewState);
+  - void RCC_APB1PeriphClockCmd(uint32_t RCC_APB1Periph, FunctionalState NewState);
+- 时钟源和倍频因子配置函数
+  - void RCC_HSICmd(FunctionalState NewState);
+  - void RCC_LSICmd(FunctionalState NewState);
+  - void RCC_PLLCmd(FunctionalState NewState);
+  - void RCC_RTCCLKCmd(FunctionalState NewState);
+  - RCC_SYSCLKConfig(RCC_SYSCLKSource_HSE);//配置时钟源为 HSE
+  - RCC_PCLK1Config(RCC_HCLK_Div2);//设置低速 APB1 时钟(PCLK1)
+- 外设复位函数
+  - void RCC_APB1PeriphResetCmd(uint32_t RCC_APB1Periph, FunctionalState NewState);
+  - void RCC_APB2PeriphResetCmd(uint32_t RCC_APB2Periph, FunctionalState NewState)
+- 获取时钟源配置函数
+
+#### 自定义系统时钟
+
+STM32 上电默认使用的是 HSI（8MHZ） 作为系统时钟，然后检测 HSE（8MHZ），如果 HSE 起振正常，那么系统时钟使用 HSE + PLL 倍频后的 72MHZ，然后，设置 AHB 使用系统时钟 1 分频，即 72MHZ；设置 APB1，APB2 的时钟是由高速 AHB 时钟分频得到，APB1 对 AHB 两分频，即 36MHz，APB2 对 AHB 一分频，即 72MHZ；
+
+- 上面的是系统默认对系统时钟的配置，也可以自己定义系统时钟
+  - 自定义系统时钟参考原代码 RCC_HSE_Config()
+  - 系统默认设置，对应函数参数：RCC_HSE_Config(RCC_PLLSource_HSE_Div1,RCC_PLLMul_9);
+  - 设置系统时钟 36MHZ，对应函数参数：RCC_HSE_Config(RCC_PLLSource_HSE_Div2,RCC_PLLMul_9);
+
+![img](./img/2022-07-18_144635_rcc_hse_config.jpg)
