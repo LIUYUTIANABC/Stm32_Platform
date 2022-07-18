@@ -1,6 +1,4 @@
 #include "led.h"
-#include "stm32f10x_rcc.h"
-#include "stm32f10x_gpio.h"
 
 /*************************************************************************
 * Name: LedInit
@@ -40,10 +38,10 @@ void LedDelay(u32 i)
 *************************************************************************/
 void LedFlash(void)
 {
-    LedDelay(0xFFFFFF);
+    LedDelay(0xFFFFF);
     GPIO_ResetBits(GPIOC, GPIO_Pin_13);
-    GPIO_SetBits(GPIOC, GPIO_Pin_14);
-    LedDelay(0xFFFFFF);
+    LED_BIT_GPIOC_PIN14 = !LED_BIT_GPIOC_PIN14;
+    LedDelay(0xFFFFF);
     GPIO_SetBits(GPIOC, GPIO_Pin_13);
-    GPIO_ResetBits(GPIOC, GPIO_Pin_14);
+    LED_BIT_GPIOC_PIN14 = 1;
 }

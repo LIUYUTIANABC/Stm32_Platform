@@ -1,7 +1,6 @@
-#include "stm32f10x.h"
+#include "system.h"
 #include "RegisterTemplate.h"
 #include "led.h"
-#include "stm32f10x_rcc.h"
 
 #undef REGISTER_LED_FEATURE
 #define LED_FEATURE
@@ -43,6 +42,8 @@ int main(void)
 *******************************************************************************/
 void RCC_HSE_Config(u32 div, u32 pllm) //自定义系统时间（可以修改时钟）
 {
+    RCC_ClocksTypeDef get_rcc_clock;    // 用来查看系统时钟
+
     RCC_DeInit();                           //将外设 RCC 寄存器重设为缺省值
     RCC_HSEConfig(RCC_HSE_ON);              //设置外部高速晶振（HSE）
     if (RCC_WaitForHSEStartUp() == SUCCESS) //等待 HSE 起振
@@ -58,4 +59,6 @@ void RCC_HSE_Config(u32 div, u32 pllm) //自定义系统时间（可以修改时
         while (RCC_GetSYSCLKSource() != 0x08)
             ; //返回用作系统时钟的时钟源,0x08：PLL 作为系统时钟
     }
+    RCC_GetClocksFreq(&get_rcc_clock);    // 获取系统时钟在结构体中
+    __NOP();
 }
