@@ -249,3 +249,33 @@ STM32 上电默认使用的是 HSI（8MHZ） 作为系统时钟，然后检测 H
   - 设置系统时钟 36MHZ，对应函数参数：RCC_HSE_Config(RCC_PLLSource_HSE_Div2,RCC_PLLMul_9);
 
 ![img](./img/2022-07-18_144635_rcc_hse_config.jpg)
+
+### 位带操作
+
+位带：STM32 是 32 位的单片机，一个寄存器有 32 个位，但是要想只操作一个位比较麻烦，所以，为了操作一个位，把寄存器中的每个位膨胀成一个32位的长的地址，对这个地址的操作就是对相应寄存器位的操作。
+
+STM32F1 中有两个区域支持位带操作
+
+- SRAM 区的最低 1MB 范围
+  - [0x20000000,0x200FFFFF] 扩展到 [0x22000000,0x23FFFFFF]
+  - AliasAddr=0x22000000+ (A-0x20000000) * 32 + n*4;(A 某个寄存器的地址，n 是寄存器的第几位（0-31）)
+- 片内外设 区的最低 1MB 范围（APB1,APB2，AHB）
+  - [0x40000000,0x400FFFFF] 扩展到 [0x42000000,0x43FFFFFF]
+  - AliasAddr=0x42000000+ (A-0x40000000) * 32 + n*4;(A 某个寄存器的地址，n 是寄存器的第几位（0-31）)
+- 通常我们只使用外设区位带操作，很少使用 SRAM 区位带操作
+
+![img](./img/2022-07-18_154541_Bit_Alias.jpg)
+
+两个区域的位带操作合并：
+
+- #define BITBAND(addr, bitnum) ((addr & 0xF0000000)+0x2000000+((addr&0xFFFFF)<<5）+(bitnum<<2)
+
+把 addr 地址强制转换为 unsigned long 类型的指针
+
+- #define MEM_ADDR(addr) *((volatile unsigned long *)(addr))
+
+把位带别名区内地址转换为指针 ，获取地址内的数据
+
+- #define BIT_ADDR(addr, bitnum) MEM_ADDR(BITBAND(addr, bitnum))
+
+volatile 关键字修饰的变量，每次存取的时候都会直接从变量地址中操作，如果，没有使用volatile 修饰，则编译器可能会优化变量值，可能出现变量值设置不一致的情况
