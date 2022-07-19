@@ -1,9 +1,11 @@
 #include "system.h"
 #include "RegisterTemplate.h"
 #include "led.h"
+#include "SysTick.h"
 
 #undef REGISTER_LED_FEATURE
-#define LED_FEATURE
+#undef FEATURE_LED
+#define FEATURE_SYSTICK
 
 void RCC_HSE_Config(u32 div, u32 pllm);
 
@@ -19,14 +21,23 @@ int main(void)
 #ifdef REGISTER_LED_FEATURE
     RegLedFlash();
 #endif
-#ifdef LED_FEATURE
+#ifdef FEATURE_LED
+    LedInit();
+#endif
+#ifdef FEATURE_SYSTICK
+    SysTick_Init(72);  // 72 是现在的系统时钟是 72MHZ
     LedInit();
 #endif
 
     while (1)
     {
-        #ifdef LED_FEATURE
+        #ifdef FEATURE_LED
         LedFlash();
+        #endif
+        #ifdef FEATURE_SYSTICK
+        LED_BIT_GPIOC_PIN14 = !LED_BIT_GPIOC_PIN14;
+        delay_ms(220);
+        __NOP;
         #endif
     }
 }
