@@ -300,3 +300,21 @@ SysTick 定时器也叫 SysTick 滴答定时器，是 Cortex-M3 内核嵌入到 
 - SysTick 通常用在操作系统中，为其提供时钟周期
 - SysTick 最大只有 24 位，如果系统时钟是72Mhz，SysTick 时钟是 9Mhz
   - 所以，最大计数是 0xFFFFFF/9 = 1864135us = 1864ms
+
+Keil 精确测量 STM32 代码运行时间
+
+- 参考网址： https://blog.csdn.net/qq_34848331/article/details/119274441
+- 修改魔术棒 Debug 选项
+
+## STM32 中断系统
+
+- Cortex-M3 支持 256 个中断，16个内核中断，240个外设中断
+- STM32 只用了一部分，16个内核中断，68个可屏蔽中断
+- 中断源：个别异常优先级固定以外，其他优先级都是可编程，可设置的
+
+### NVIC 介绍
+
+NVIC：Nested Vectored Interrupt Controller，中文意思就是嵌套向量中断控制器，它属于 M3 内核的一个外设，控制着芯片的中断相关功能。
+
+- NVIC 有一个结构体，但通常只用到ISER、ICER 和 IP 这3个寄存器
+- 定义在 core_cm3.h 中，属于 CMSIS 标准，所有 M3 内核的芯片都是相同的
