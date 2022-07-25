@@ -318,3 +318,55 @@ NVIC：Nested Vectored Interrupt Controller，中文意思就是嵌套向量中�
 
 - NVIC 有一个结构体，但通常只用到ISER、ICER 和 IP 这3个寄存器
 - 定义在 core_cm3.h 中，属于 CMSIS 标准，所有 M3 内核的芯片都是相同的
+
+### 中断优先级
+
+M3 内核可以设置8位，即一个字节的中断优先级控制字节，STM32F103 只有4位
+
+- 4 位中断优先级控制位，数值越小，优先级越高
+  - 抢占式优先级，可以打断当前执行的中断程序，形成中断嵌套
+  - 响应式优先级，也称为副优先级
+- 数值越小，优先级越高
+- 如果抢占式优先级相同，则比较响应式优先级
+- 如果抢占和响应都相同，则安装中断表的排列顺序决定执行哪个中断
+
+中断的库函数在 misc.h, misc.c 中；NVIC_PriorityGroupConfig() 配置优先级分组
+
+- 中断优先级可以分成 5 组
+  - NVIC_PriorityGroup_0: 抢占分组 0bit，响应分组 4bit
+  - NVIC_PriorityGroup_1: 抢占分组 1bit，响应分组 3bit
+  - NVIC_PriorityGroup_2: 抢占分组 2bit，响应分组 2bit
+  - NVIC_PriorityGroup_3: 抢占分组 3bit，响应分组 1bit
+  - NVIC_PriorityGroup_4: 抢占分组 4bit，响应分组 0bit
+
+开启中断步骤
+
+- 使能中断
+- 配置中断源，及优先级：NVIC_InitTypeDef，中断源在 stm32f10x.h 中
+- 编写中断服务函数，函数名在 startup_stm32f10x_hd.s 中
+
+## 外部中断
+
+EXTI 分为两大部分，产生中断 和 产生事件
+
+- 产生中断：通过配置 IO口, 检测上升沿和下降沿，产生中断，执行中断函数
+- 产生事件：配置 IO口，检测边沿，产生事件，供给其他外设使用，比如，定时器，ADC；通常用来触发定时器或ADC开始转换
+
+EXTI 外部中断/事件映射
+
+- EXTI 0-15: 对应外部 IO口输入中断
+  - PA0,PB0... 连接 EXTI0； PA1,PB1... 连接 EXTI1
+- EXTI 16: 连接到 PVD 输出
+- EXTI 17: 连接到 RTC 闹钟事件
+- EXTI 18: 连接到 USB OTG FS 唤醒事件
+- EXTI 19: 连接到 以太网唤醒事件
+
+外部中断在 stm32f10x_exti.c, stm32f10x_exti.h 中
+
+配置步骤
+
+- 使能 IO 时钟，设置输入，开启 IO 多功能
+- 开启 AFIO 时钟，映射 GPIO 到对应的中断线上
+- 配置 NVIC 中断分组
+- 初始化 EXTI 选择触发方式
+- 编写中断服务函数

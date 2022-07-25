@@ -2,10 +2,12 @@
 #include "RegisterTemplate.h"
 #include "led.h"
 #include "SysTick.h"
+#include "exti.h"
 
 #undef REGISTER_LED_FEATURE
 #undef FEATURE_LED
 #define FEATURE_SYSTICK
+#define FEATURE_EXTI
 
 void RCC_HSE_Config(u32 div, u32 pllm);
 
@@ -28,6 +30,10 @@ int main(void)
     SysTick_Init(72);  // 72 是现在的系统时钟是 72MHZ
     LedInit();
 #endif
+#ifdef FEATURE_EXTI
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2); //中断优先级分组 分 2 组
+    My_EXTI_Init();
+#endif
 
     while (1)
     {
@@ -36,7 +42,7 @@ int main(void)
         #endif
         #ifdef FEATURE_SYSTICK
         LED_BIT_GPIOC_PIN14 = !LED_BIT_GPIOC_PIN14;
-        delay_ms(220);
+        delay_ms(250);
         __NOP;
         #endif
     }
