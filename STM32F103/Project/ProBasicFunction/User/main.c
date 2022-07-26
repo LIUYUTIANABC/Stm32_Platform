@@ -3,11 +3,13 @@
 #include "led.h"
 #include "SysTick.h"
 #include "exti.h"
+#include "time.h"
 
 #undef REGISTER_LED_FEATURE
 #undef FEATURE_LED
 #define FEATURE_SYSTICK
 #define FEATURE_EXTI
+#define FEATURE_TIME
 
 void RCC_HSE_Config(u32 div, u32 pllm);
 
@@ -33,6 +35,9 @@ int main(void)
 #ifdef FEATURE_EXTI
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2); //中断优先级分组 分 2 组
     My_EXTI_Init();
+#endif
+#ifdef FEATURE_TIME
+    TIM4_Init(1000, 36000-1); // 500ms 定时器 TIM4 中断
 #endif
 
     while (1)

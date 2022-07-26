@@ -437,6 +437,11 @@
               <FileType>1</FileType>
               <FilePath>.\App\exti.c</FilePath>
             </File>
+            <File>
+              <FileName>time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\App\time.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -461,6 +466,11 @@
               <FileName>stm32f10x_exti.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_exti.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_tim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_tim.c</FilePath>
             </File>
           </Files>
         </Group>
