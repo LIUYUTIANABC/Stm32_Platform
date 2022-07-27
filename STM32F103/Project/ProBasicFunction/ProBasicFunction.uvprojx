@@ -442,6 +442,11 @@
               <FileType>1</FileType>
               <FilePath>.\App\time.c</FilePath>
             </File>
+            <File>
+              <FileName>iwdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\App\iwdg.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -471,6 +476,11 @@
               <FileName>stm32f10x_tim.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_tim.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_iwdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_iwdg.c</FilePath>
             </File>
           </Files>
         </Group>

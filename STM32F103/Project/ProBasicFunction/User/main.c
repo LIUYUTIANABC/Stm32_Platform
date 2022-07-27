@@ -4,12 +4,14 @@
 #include "SysTick.h"
 #include "exti.h"
 #include "time.h"
+#include "iwdg.h"
 
 #undef REGISTER_LED_FEATURE
 #undef FEATURE_LED
 #define FEATURE_SYSTICK
 #define FEATURE_EXTI
 #define FEATURE_TIME
+#define FEATURE_IWDG
 
 void RCC_HSE_Config(u32 div, u32 pllm);
 
@@ -39,15 +41,23 @@ int main(void)
 #ifdef FEATURE_TIME
     TIM4_Init(1000, 36000-1); // 500ms 定时器 TIM4 中断
 #endif
+#ifdef FEATURE_IWDG
+    IWDG_Init(4, 800);  // 看门狗时钟是 1280ms
+#endif
+
+    delay_ms(800);
 
     while (1)
     {
+        #ifdef FEATURE_IWDG
+        IWDG_FeedDog();
+        #endif
         #ifdef FEATURE_LED
         LedFlash();
         #endif
         #ifdef FEATURE_SYSTICK
         LED_BIT_GPIOC_PIN14 = !LED_BIT_GPIOC_PIN14;
-        delay_ms(250);
+        delay_ms(100);
         __NOP;
         #endif
     }
