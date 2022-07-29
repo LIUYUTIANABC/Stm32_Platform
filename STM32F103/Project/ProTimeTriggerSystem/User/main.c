@@ -5,6 +5,7 @@
 #include "exti.h"
 #include "time.h"
 #include "iwdg.h"
+#include "Sch.h"
 
 //------------------------------------------------------------------------
 //- 特性

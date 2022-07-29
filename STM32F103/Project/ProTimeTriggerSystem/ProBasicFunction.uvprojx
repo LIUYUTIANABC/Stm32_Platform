@@ -447,6 +447,11 @@
               <FileType>1</FileType>
               <FilePath>.\App\iwdg.c</FilePath>
             </File>
+            <File>
+              <FileName>Sch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\App\Sch.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
