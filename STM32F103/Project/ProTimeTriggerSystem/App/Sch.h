@@ -32,4 +32,7 @@ typedef struct
     tByte RunMe;
 } sTask;
 
+void SCH_Init_TIM4(void);
+void SCH_Delete_Task(tByte i);
+
 #endif

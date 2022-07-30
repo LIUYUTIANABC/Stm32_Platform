@@ -16,6 +16,7 @@
 #undef FEATURE_EXTI
 #undef FEATURE_TIME
 #undef FEATURE_IWDG
+#define FEATURE_SCH
 
 //------------------------------------------------------------------------
 //- 私有函数原型
@@ -53,6 +54,9 @@ int main(void)
 #ifdef FEATURE_IWDG
     IWDG_Init(4, 800);  // 看门狗时钟是 1280ms
 #endif
+#ifdef FEATURE_SCH
+    SCH_Init_TIM4();  // 内部初始化 TIM4 定时 1ms
+#endif
 
     // 上电复位时间 800ms
     delay_ms(800);
@@ -74,7 +78,6 @@ int main(void)
         #ifdef FEATURE_IWDG
         IWDG_FeedDog();
         #endif
-        (*pFn_led)();
     }
 }
 
