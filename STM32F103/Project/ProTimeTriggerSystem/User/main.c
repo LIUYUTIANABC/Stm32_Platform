@@ -56,6 +56,7 @@ int main(void)
 #endif
 #ifdef FEATURE_SCH
     SCH_Init_TIM4();  // 内部初始化 TIM4 定时 1ms
+    SCH_Add_Task(LedFlashUpdate, 0, 1000);
 #endif
 
     // 上电复位时间 800ms
@@ -78,6 +79,7 @@ int main(void)
         #ifdef FEATURE_IWDG
         IWDG_FeedDog();
         #endif
+        SCH_Dispatch_Tasks();
     }
 }
 

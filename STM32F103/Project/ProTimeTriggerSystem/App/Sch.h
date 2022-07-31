@@ -32,7 +32,12 @@ typedef struct
     tByte RunMe;
 } sTask;
 
+//------------------------------------------------------------------------
+//- 公用函数原型
+//------------------------------------------------------------------------
 void SCH_Init_TIM4(void);
-void SCH_Delete_Task(tByte i);
+tByte SCH_Delete_Task(const tByte TASK_INDEX);
+tByte SCH_Add_Task(void (* pFunction)(), const tWord DELAY, const tWord PERIOD);
+void SCH_Dispatch_Tasks(void);
 
 #endif

@@ -8,5 +8,6 @@
 
 void LedInit(void);
 void LedFlash(void);
+void LedFlashUpdate(void);
 
 #endif

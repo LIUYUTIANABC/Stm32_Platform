@@ -1,5 +1,10 @@
 #include "led.h"
 
+//------------------------------------------------------------------------
+//- 私有变量定义
+//------------------------------------------------------------------------
+static unsigned char LED_state_G = 0;
+
 /*************************************************************************
 * Name: LedInit
 * Function:
@@ -44,4 +49,26 @@ void LedFlash(void)
     LedDelay(0xFFFFF);
     GPIO_SetBits(GPIOC, GPIO_Pin_13);
     LED_BIT_GPIOC_PIN14 = 1;
+}
+
+/*************************************************************************
+* Name: LedFlashUpdate
+* Function:
+* Input:
+* Output:
+*************************************************************************/
+void LedFlashUpdate(void)
+{
+    if (LED_state_G == 0)
+    {
+        LED_state_G = 1;
+        GPIO_ResetBits(GPIOC, GPIO_Pin_13);
+        LED_BIT_GPIOC_PIN14 = 0;
+    }
+    else
+    {
+        LED_state_G = 0;
+        GPIO_SetBits(GPIOC, GPIO_Pin_13);
+        LED_BIT_GPIOC_PIN14 = 1;
+    }
 }
