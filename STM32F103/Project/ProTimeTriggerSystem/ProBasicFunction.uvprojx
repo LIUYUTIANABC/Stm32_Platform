@@ -452,6 +452,11 @@
               <FileType>1</FileType>
               <FilePath>.\App\Sch.c</FilePath>
             </File>
+            <File>
+              <FileName>T_lights.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\App\T_lights.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

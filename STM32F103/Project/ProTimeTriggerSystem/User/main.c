@@ -6,6 +6,7 @@
 #include "time.h"
 #include "iwdg.h"
 #include "Sch.h"
+#include "T_Lights.h"
 
 //------------------------------------------------------------------------
 //- 特性
@@ -56,7 +57,8 @@ int main(void)
 #endif
 #ifdef FEATURE_SCH
     SCH_Init_TIM4();  // 内部初始化 TIM4 定时 1ms
-    SCH_Add_Task(LedFlashUpdate, 0, 1000);
+    // SCH_Add_Task(LedFlashUpdate, 0, 1000);
+    SCH_Add_Task(TRAFFIC_LIGHTS_Update, 0, 1000);
 #endif
 
     // 上电复位时间 800ms
