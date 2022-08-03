@@ -5,6 +5,7 @@
         "system.h": "c",
         "led.h": "c",
         "exti.h": "c",
-        "systick.h": "c"
+        "systick.h": "c",
+        "sch.h": "c"
     }
 }
