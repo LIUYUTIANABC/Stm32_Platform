@@ -198,7 +198,23 @@ void TIM4_IRQHandler(void)
                 if (SCH_tasks_G[Index].Delay == 0)
                 {
                     // 任务需要运行
-                    SCH_tasks_G[Index].RunMe += 1;  // "RunMe" 标准加1
+                    if (SCH_tasks_G[Index].Co_op)
+                    {
+                        // 如果是合作式任务，RunMe 标志加 1
+                        SCH_tasks_G[Index].RunMe += 1;
+                    }
+                    else
+                    {
+                        // 如果是抢占式任务，立即运行它
+                        (*SCH_tasks_G[Index].pTask)();    // 运行任务
+                        SCH_tasks_G[Index].RunMe -= 1;    // RunMe 标志位，复位/减一
+                        // 周期性的任务将再次运行
+                        // 单次任务，将从任务队列中删除
+                        if (SCH_tasks_G[Index].Period == 0)
+                        {
+                            SCH_tasks_G[Index].pTask = 0;
+                        }
+                    }
                     if (SCH_tasks_G[Index].Period)
                     {
                         // 调度周期性的任务再次运行
