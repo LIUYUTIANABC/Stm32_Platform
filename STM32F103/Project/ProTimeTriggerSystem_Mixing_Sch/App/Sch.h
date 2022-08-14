@@ -2,6 +2,7 @@
 #define _SCH_H
 
 // 调度器文件
+// - 参考网址：https://blog.csdn.net/wowocpp/article/details/82998576
 
 #include "system.h"
 
@@ -13,7 +14,7 @@ typedef unsigned long tLong;
 //- 在程序运行期间的任一时刻允许的任务最大数目
 //- 每个新建项目都必须调整
 //------------------------------------------------------------------------
-#define SCH_MAX_TASKS (3)
+#define hSCH_MAX_TASKS (3)
 
 //------------------------------------------------------------------------
 //- 定义调度器的数据结构
@@ -33,14 +34,14 @@ typedef struct
     // 如果任务是合作式的，设置为 1
     // 如果任务是抢占式的，设置为 0
     tByte Co_op;
-} sTask;
+} sTaskH;
 
 //------------------------------------------------------------------------
 //- 公用函数原型
 //------------------------------------------------------------------------
-void SCH_Init_TIM4(void);
-tByte SCH_Delete_Task(const tByte TASK_INDEX);
-tByte SCH_Add_Task(void (* pFunction)(), const tWord DELAY, const tWord PERIOD);
-void SCH_Dispatch_Tasks(void);
+void hSCH_Init_TIM4(void);
+tByte hSCH_Delete_Task(const tByte TASK_INDEX);
+tByte hSCH_Add_Task(void (* pFunction)(), const tWord DELAY, const tWord PERIOD);
+void hSCH_Dispatch_Tasks(void);
 
 #endif

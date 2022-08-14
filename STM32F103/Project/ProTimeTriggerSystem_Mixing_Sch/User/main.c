@@ -56,9 +56,14 @@ int main(void)
     IWDG_Init(4, 800);  // 看门狗时钟是 1280ms
 #endif
 #ifdef FEATURE_SCH
-    SCH_Init_TIM4();  // 内部初始化 TIM4 定时 1ms
+    hSCH_Init_TIM4();  // 内部初始化 TIM4 定时 1ms
     // SCH_Add_Task(LedFlashUpdate, 0, 1000);
-    SCH_Add_Task(TRAFFIC_LIGHTS_Update, 0, 1000);
+    // 添加“短”任务（1000ms 亮， 1000ms 灭）
+    // 这是一个抢占式任务
+    hSCH_Add_Task(Led_Short_Update, 0, 1000, 0);
+    // 添加“长”任务（运行时间 10s）
+    // 这是一个合作式任务
+    hSCH_Add_Task(Led_Long_Update, 0, 20000, 1);
 #endif
 
     // 上电复位时间 800ms
@@ -81,7 +86,7 @@ int main(void)
         #ifdef FEATURE_IWDG
         IWDG_FeedDog();
         #endif
-        SCH_Dispatch_Tasks();
+        hSCH_Dispatch_Tasks();
     }
 }
 
