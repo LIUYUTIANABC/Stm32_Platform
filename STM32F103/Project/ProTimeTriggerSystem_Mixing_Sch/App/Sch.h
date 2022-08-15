@@ -41,7 +41,7 @@ typedef struct
 //------------------------------------------------------------------------
 void hSCH_Init_TIM4(void);
 tByte hSCH_Delete_Task(const tByte TASK_INDEX);
-tByte hSCH_Add_Task(void (* pFunction)(), const tWord DELAY, const tWord PERIOD);
+tByte hSCH_Add_Task(void (* Fn_p)(), const tWord DELAY, const tWord PERIOD, const tWord Co_op);
 void hSCH_Dispatch_Tasks(void);
 
 #endif

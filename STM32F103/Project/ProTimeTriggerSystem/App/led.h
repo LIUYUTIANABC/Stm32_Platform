@@ -8,7 +8,6 @@
 
 void LedInit(void);
 void LedFlash(void);
-void Led_Short_Update(void);
-void Led_Long_Update(void);
+void LedFlashUpdate(void);
 
 #endif
