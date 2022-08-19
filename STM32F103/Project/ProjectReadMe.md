@@ -33,3 +33,7 @@
 ## ProTimeTriggerSourceCode
 
 "时间触发嵌入式系统设计模式" 书籍的光盘 CD 内的源码；
+
+## ProTimeTriggerSystem_Sch_USART-RS232
+
+使用合作式调度器，实现 USART1 和 PC 通过串口助手通信；
