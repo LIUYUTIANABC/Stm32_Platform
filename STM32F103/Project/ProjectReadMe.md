@@ -25,8 +25,11 @@
   - 合作式调度器
   - 抢占式调度器
 
-## ProTimeTriggerSystem_Mixing_Sch
+## ProTimeTriggerSystem_Hybrid_Sch
 
 - 混合式调度器：综合抢占式调度器和合作式调度器的特性，且是受控的
   - 即有一个抢占式任务的合作式调度器
 
+## ProTimeTriggerSourceCode
+
+"时间触发嵌入式系统设计模式" 书籍的光盘 CD 内的源码；
