@@ -15,7 +15,7 @@
 - 定时器 TIM4 定时中断
 - 独立看门狗 IWDG
 
-## ProTimeTriggerSystem
+## ProTimeTriggerSystem_Sch
 
 结合 "时间触发嵌入式系统设计模式" 书籍，学习基于时间的触发嵌入式系统
 
