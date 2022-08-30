@@ -7,6 +7,7 @@
 #include "iwdg.h"
 #include "Sch.h"
 #include "T_Lights.h"
+#include "usart.h"
 
 //------------------------------------------------------------------------
 //- 特性
@@ -57,8 +58,11 @@ int main(void)
 #endif
 #ifdef FEATURE_SCH
     SCH_Init_TIM4();  // 内部初始化 TIM4 定时 1ms
+    Usart1NoInterruptInit();
     // SCH_Add_Task(LedFlashUpdate, 0, 1000);
-    SCH_Add_Task(TRAFFIC_LIGHTS_Update, 0, 1000);
+    // SCH_Add_Task(TRAFFIC_LIGHTS_Update, 0, 1000);
+    SCH_Add_Task(UsartDebug, 0, 1000);
+    SCH_Add_Task(UsartDebugRx, 1, 5);
 #endif
 
     // 上电复位时间 800ms

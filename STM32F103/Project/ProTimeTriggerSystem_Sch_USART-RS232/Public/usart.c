@@ -3,8 +3,6 @@
 #include "stm32f10x_rcc.h"
 #include "stm32f10x_gpio.h"
 #include "stm32f10x_usart.h"
-// #include "stm32f4xx_syscfg.h"
-// #include "misc.h"
 
 /*************************************************************************
 * Name: Usart1NoInterruptInit
@@ -14,70 +12,80 @@
 *************************************************************************/
 void Usart1NoInterruptInit(void)
 {
-    GPIO_InitTypeDef GPIO_InitStruture;
-    USART_InitTypeDef USART_InitStruture;
+    GPIO_InitTypeDef GPIO_InitStructure;
+    USART_InitTypeDef USART_InitStructure;
 
     // Enable GPIO Rcc clock
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
     // USART RCC clock
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
 
-    // Alternate functions: USART1
-    // Can not used GPIO_PinSource9 | GPIO_PinSource10 to enable GPIO_PinAFConfig
-    // Error: GPIO_PinAFConfig(GPIOA, GPIO_PinSource9 | GPIO_PinSource10, GPIO_AF_USART1);
-    GPIO_PinAFConfig(GPIOA, GPIO_PinSource9, GPIO_AF_USART1);
-    GPIO_PinAFConfig(GPIOA, GPIO_PinSource10, GPIO_AF_USART1);
-
     // GPIO Init
-    GPIO_InitStruture.GPIO_Pin = GPIO_Pin_9 | GPIO_Pin_10;
-    GPIO_InitStruture.GPIO_Mode = GPIO_Mode_AF;
-    GPIO_InitStruture.GPIO_OType = GPIO_OType_PP;
-    GPIO_InitStruture.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStruture.GPIO_PuPd = GPIO_PuPd_NOPULL;
-    GPIO_Init(GPIOA, &GPIO_InitStruture);
+    // Configure USART1 Tx as alternate function push-pull
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
 
+    /* Configure USART1 Rx as input floating */
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
 
     // USART Init
-    USART_InitStruture.USART_BaudRate = 9600;
-    USART_InitStruture.USART_WordLength = USART_WordLength_8b;
-    USART_InitStruture.USART_StopBits = USART_StopBits_1;
-    USART_InitStruture.USART_Parity = USART_Parity_No;
-    USART_InitStruture.USART_Mode = USART_Mode_Tx | USART_Mode_Rx;
-    USART_InitStruture.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-    USART_Init(USART1, &USART_InitStruture);
+    /* USART2 configuration ------------------------------------------------------*/
+    /* USART2 configured as follow:
+        - BaudRate = 9600 baud
+        - Word Length = 8 Bits
+        - One Stop Bit
+        - No parity
+        - Hardware flow control enabled (RTS and CTS signals)
+        - Receive and transmit enabled
+    */
+    USART_InitStructure.USART_BaudRate = 9600;
+    USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+    USART_InitStructure.USART_StopBits = USART_StopBits_1;
+    USART_InitStructure.USART_Parity = USART_Parity_No ;
+    USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+    USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
 
-    // USART Enable
+    USART_Init(USART1, &USART_InitStructure);
+    /* Enable the USART1 */
     USART_Cmd(USART1, ENABLE);
-    USART_ClearFlag(USART1, USART_FLAG_TC);
 }
 
-//------------------------------------------------------------------------
-//- Debug No_Interrput function
-//------------------------------------------------------------------------
-// if (Pwm_Value % 64 == 0)
-// {
-//     USART_SendData(USART1, Pwm_Value >> 8);
-//     while (USART_GetFlagStatus(USART1, USART_FLAG_TC) != SET)
-//     {
-//         ;
-//     }
-//     USART_ClearFlag(USART1, USART_FLAG_TC);
+/*************************************************************************
+* Name: UsartDebug
+* Function:
+* Input:
+* Output: print 'Hello World'
+*************************************************************************/
+void UsartDebug(void)
+{
+    u8 l_test_buff[15] = "Hello World!";
+    u8 i = 0;
+   while (i < 15)
+   {
+       USART_SendData(USART1, l_test_buff[i]);
+       while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+       i++;
+   }
+}
 
-//     USART_SendData(USART1, Pwm_Value);
-//     while (USART_GetFlagStatus(USART1, USART_FLAG_TC) != SET)
-//     {
-//         ;
-//     }
-//     USART_ClearFlag(USART1, USART_FLAG_TC);
-// }
-// if (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == 1)
-// {
-//     g_Count = USART_ReceiveData(USART1);
-//     USART_ClearFlag(USART1, USART_FLAG_RXNE);
-//     USART_SendData(USART1, g_Count);
-//     while (USART_GetFlagStatus(USART1, USART_FLAG_TC) != SET)
-//     {
-//         ;
-//     }
-//     USART_ClearFlag(USART1, USART_FLAG_TC);
-// }
+/*************************************************************************
+* Name: UsartDebug
+* Function:
+* Input:
+* Output: print 'Hello World'
+*************************************************************************/
+void UsartDebugRx(void)
+{
+    u8 i = 0;
+
+   if(USART_GetFlagStatus(USART1, USART_FLAG_RXNE) != RESET)
+   {
+      i = USART_ReceiveData(USART1);
+      USART_SendData(USART1, i);
+   }
+}
+

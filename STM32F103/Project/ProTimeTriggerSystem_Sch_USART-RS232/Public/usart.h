@@ -4,7 +4,7 @@
 #include "system.h"
 
 void Usart1NoInterruptInit(void);
-void Usart1InterruptInit(void);
-void DebugPrintf(void);
+void UsartDebug(void);
+void UsartDebugRx(void);
 
 #endif
