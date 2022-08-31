@@ -8,6 +8,7 @@
 #include "Sch.h"
 #include "T_Lights.h"
 #include "usart.h"
+#include "pc_rs232.h"
 
 //------------------------------------------------------------------------
 //- 特性
@@ -61,8 +62,12 @@ int main(void)
     Usart1NoInterruptInit(9600);  // 初始化 Usart1
     // SCH_Add_Task(LedFlashUpdate, 10, 200);   // 1s 闪烁一次
     // SCH_Add_Task(TRAFFIC_LIGHTS_Update, 0, 1000);
-    SCH_Add_Task(UsartDebug, 0, 1000);    // 5s 发送一次数据
-    SCH_Add_Task(UsartDebugRx, 1, 5);
+    // SCH_Add_Task(UsartDebug, 0, 1000);    // 5s 发送一次数据
+    // SCH_Add_Task(UsartDebugRx, 1, 5);
+
+    // We have to schedule this task (10x - 100x a second)
+    // TIMING IS IN TICKS NOT MILLISECONDS (5 ms tick interval)
+   SCH_Add_Task(MENU_Command_Processor,10,2);
 #endif
 
     // 上电复位时间 800ms
