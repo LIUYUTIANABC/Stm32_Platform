@@ -57,11 +57,11 @@ int main(void)
     IWDG_Init(4, 800);  // 看门狗时钟是 1280ms
 #endif
 #ifdef FEATURE_SCH
-    SCH_Init_TIM4();  // 内部初始化 TIM4 定时 1ms
+    SCH_Init_TIM4();  // 内部初始化 TIM4 定时 5ms
     Usart1NoInterruptInit(9600);  // 初始化 Usart1
-    // SCH_Add_Task(LedFlashUpdate, 0, 1000);
+    // SCH_Add_Task(LedFlashUpdate, 10, 200);   // 1s 闪烁一次
     // SCH_Add_Task(TRAFFIC_LIGHTS_Update, 0, 1000);
-    SCH_Add_Task(UsartDebug, 0, 1000);
+    SCH_Add_Task(UsartDebug, 0, 1000);    // 5s 发送一次数据
     SCH_Add_Task(UsartDebugRx, 1, 5);
 #endif
 
