@@ -58,7 +58,7 @@ int main(void)
 #endif
 #ifdef FEATURE_SCH
     SCH_Init_TIM4();  // 内部初始化 TIM4 定时 1ms
-    Usart1NoInterruptInit();
+    Usart1NoInterruptInit(9600);  // 初始化 Usart1
     // SCH_Add_Task(LedFlashUpdate, 0, 1000);
     // SCH_Add_Task(TRAFFIC_LIGHTS_Update, 0, 1000);
     SCH_Add_Task(UsartDebug, 0, 1000);

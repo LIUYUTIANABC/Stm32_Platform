@@ -10,7 +10,7 @@
 * Input:
 * Output:
 *************************************************************************/
-void Usart1NoInterruptInit(void)
+void Usart1NoInterruptInit(u16 BAUD_RATE)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
     USART_InitTypeDef USART_InitStructure;
@@ -42,7 +42,7 @@ void Usart1NoInterruptInit(void)
         - Hardware flow control enabled (RTS and CTS signals)
         - Receive and transmit enabled
     */
-    USART_InitStructure.USART_BaudRate = 9600;
+    USART_InitStructure.USART_BaudRate = BAUD_RATE;
     USART_InitStructure.USART_WordLength = USART_WordLength_8b;
     USART_InitStructure.USART_StopBits = USART_StopBits_1;
     USART_InitStructure.USART_Parity = USART_Parity_No ;

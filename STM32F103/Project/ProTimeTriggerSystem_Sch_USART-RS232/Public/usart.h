@@ -3,7 +3,7 @@
 
 #include "system.h"
 
-void Usart1NoInterruptInit(void);
+void Usart1NoInterruptInit(u16 BAUD_RATE);
 void UsartDebug(void);
 void UsartDebugRx(void);
 
