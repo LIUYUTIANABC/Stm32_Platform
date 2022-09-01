@@ -17,8 +17,6 @@ void Function_C(void);
 
 // ------ Public constants -----------------------------------------
 
-const u8 CHAR_MAP_G[10] = {'0','1','2','3','4','5','6','7','8','9'};
-
 void Elapsed_Time_RS232_Update(void);
 
 #endif
