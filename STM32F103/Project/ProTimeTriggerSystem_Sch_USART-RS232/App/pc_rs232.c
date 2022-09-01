@@ -119,6 +119,66 @@ void Function_C(void)
     PC_LINK_IO_Write_String_To_Buffer("\n* Doing C *\n\n");
 }
 
+// ------ Public variable definitions ------------------------------
+
+u8 Hou_G = 0;
+u8 Min_G = 0;
+u8 Sec_G = 0;
+
+/*------------------------------------------------------------------*-
+
+  Elapsed_Time_RS232_Update()
+
+  Function for displaying elapsed time on PC Screen.
+
+  *** Must be scheduled once per second ***
+
+-*------------------------------------------------------------------*/
+void Elapsed_Time_RS232_Update(void)
+{
+    u8 Time_Str[30] = "\rElapsed time:               ";
+
+    if (++Sec_G == 60)
+    {
+        Sec_G = 0;
+
+        if (++Min_G == 60)
+        {
+            Min_G = 0;
+
+            if (++Hou_G == 24)
+            {
+                Hou_G = 0;
+            }
+        }
+    }
+
+    Time_Str[15] = CHAR_MAP_G[Hou_G / 10];
+    Time_Str[16] = CHAR_MAP_G[Hou_G % 10];
+
+    Time_Str[18] = CHAR_MAP_G[Min_G / 10];
+    Time_Str[19] = CHAR_MAP_G[Min_G % 10];
+
+    Time_Str[21] = CHAR_MAP_G[Sec_G / 10];
+    Time_Str[22] = CHAR_MAP_G[Sec_G % 10];
+
+    // We don't display seconds in this version.
+    // We simply use the seconds data to turn on and off the colon
+    // (between hours and minutes)
+    if ((Sec_G % 2) == 0)
+    {
+        Time_Str[17] = ':';
+        Time_Str[20] = ':';
+    }
+    else
+    {
+        Time_Str[17] = ' ';
+        Time_Str[20] = ' ';
+    }
+
+    PC_LINK_IO_Write_String_To_Buffer(Time_Str);
+}
+
 /*------------------------------------------------------------------*-
   ---- END OF FILE -------------------------------------------------
 -*------------------------------------------------------------------*/

@@ -67,7 +67,9 @@ int main(void)
 
     // We have to schedule this task (10x - 100x a second)
     // TIMING IS IN TICKS NOT MILLISECONDS (5 ms tick interval)
-   SCH_Add_Task(MENU_Command_Processor,10,2);
+    SCH_Add_Task(MENU_Command_Processor,10,2);
+    // Update the time once per second
+    SCH_Add_Task(Elapsed_Time_RS232_Update,1000,200);
 #endif
 
     // 上电复位时间 800ms

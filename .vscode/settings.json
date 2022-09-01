@@ -6,6 +6,7 @@
         "led.h": "c",
         "exti.h": "c",
         "systick.h": "c",
-        "sch.h": "c"
+        "sch.h": "c",
+        "CHAR_MAP.C": "cpp"
     }
 }
