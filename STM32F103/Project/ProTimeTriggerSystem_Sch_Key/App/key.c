@@ -154,8 +154,8 @@ u8 Sw_status_G; // The current switch status
 
 // SW_THRES must be > 1 for correct debounce behaviour
 #define SW_Multi_THRES (1)
-#define SW_Multi_THRES_X2 (SW_THRES + SW_THRES + SW_THRES + SW_THRES)
-#define SW_Multi_THRES_X3 (SW_THRES_X2 + SW_THRES_X2)
+#define SW_Multi_THRES_X2 (SW_Multi_THRES + SW_Multi_THRES + SW_Multi_THRES + SW_Multi_THRES)
+#define SW_Multi_THRES_X3 (SW_Multi_THRES_X2 + SW_Multi_THRES_X2)
 
 /*------------------------------------------------------------------*-
 
