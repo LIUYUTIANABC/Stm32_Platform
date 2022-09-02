@@ -61,14 +61,22 @@ int main(void)
     KeyInit();
     // SCH_Add_Task(TRAFFIC_LIGHTS_Update, 0, 1000);
 
-    // Add LED task
-    // Here, LED will only flash while switch is pressed...
-    SCH_Add_Task(LedFlashUpdate, 5, 1000);
-
+    // *********** Switch_A *******************
     // Add a 'SWITCH_Update' task, every ~200 ms.
     // Scheduler timings is in ticks.
     // [1 ms tick interval - see Sch 'init' function]
     SCH_Add_Task(SWITCH_Update, 0, 200);
+
+    // Add LED task
+    // Here, LED will only flash while switch is pressed...
+    SCH_Add_Task(LedFlashUpdate, 5, 1000);
+
+    // *********** On_Off *******************
+    // [1 ms tick interval - see Sch 'init' function]
+    // SCH_Add_Task(SWITCH_ON_OFF_Update, 0, 200);
+    // SCH_Add_Task(LedFlashUpdate, 5, 1000);
+
+
 #endif
 
     // 上电复位时间 100ms

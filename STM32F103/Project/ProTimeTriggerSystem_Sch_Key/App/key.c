@@ -76,3 +76,70 @@ void SWITCH_Update(void)
 /*------------------------------------------------------------------*-
   ---- END OF FILE -------------------------------------------------
 -*------------------------------------------------------------------*/
+
+//----------------------------------------------------------------------------------
+// No_Off switch function
+//----------------------------------------------------------------------------------
+
+// ------ Private variables ----------------------------------------
+
+static u8 Sw_press_duration_G = 0;
+static u8 Sw_blocked_G = 0;
+
+/*------------------------------------------------------------------*-
+
+  FUNCTION: SWITCH_ON_OFF_Update()
+
+  This is the main on-off switch function.
+
+  It should be scheduled every 50 - 500 ms.
+
+-*------------------------------------------------------------------*/
+void SWITCH_ON_OFF_Update(void)
+{
+    // If the switch is blocked, decrement the count and return
+    // without checking the switch pin status.
+    // This is done to give the user time to remove their finger
+    // from the switch - otherwise if they keep their finger on
+    // the switch for more than 0.4s the light will switch off again.
+
+    if (Sw_blocked_G)
+    {
+        Sw_blocked_G--;
+        return;
+    }
+
+    if (KEY_PIN == SW_PRESSED)
+    {
+        Sw_press_duration_G += 1;
+
+        if (Sw_press_duration_G > SW_THRES)
+        {
+            Sw_press_duration_G = SW_THRES;
+
+            // Change switch state
+            if (Sw_pressed_G == 1)
+            {
+                Sw_pressed_G = 0; // Switch state changed to OFF
+            }
+            else
+            {
+                Sw_pressed_G = 1; // Switch state changed to ON
+            }
+
+            // Allow no other changes for ~1 second
+            Sw_blocked_G = 5;
+            return;
+        }
+
+        // Switch pressed, but not yet for long enough
+        return;
+    }
+
+    // Switch not pressed - reset the count
+    Sw_press_duration_G = 0;
+}
+
+/*------------------------------------------------------------------*-
+  ---- END OF FILE -------------------------------------------------
+-*------------------------------------------------------------------*/
