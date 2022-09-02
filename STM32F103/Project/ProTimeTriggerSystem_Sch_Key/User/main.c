@@ -7,6 +7,7 @@
 #include "iwdg.h"
 #include "Sch.h"
 #include "T_Lights.h"
+#include "key.h"
 
 //------------------------------------------------------------------------
 //- 特性
@@ -57,12 +58,21 @@ int main(void)
 #endif
 #ifdef FEATURE_SCH
     SCH_Init_TIM4();  // 内部初始化 TIM4 定时 1ms
-    // SCH_Add_Task(LedFlashUpdate, 0, 1000);
-    SCH_Add_Task(TRAFFIC_LIGHTS_Update, 0, 1000);
+    KeyInit();
+    // SCH_Add_Task(TRAFFIC_LIGHTS_Update, 0, 1000);
+
+    // Add LED task
+    // Here, LED will only flash while switch is pressed...
+    SCH_Add_Task(LedFlashUpdate, 5, 1000);
+
+    // Add a 'SWITCH_Update' task, every ~200 ms.
+    // Scheduler timings is in ticks.
+    // [1 ms tick interval - see Sch 'init' function]
+    SCH_Add_Task(SWITCH_Update, 0, 200);
 #endif
 
-    // 上电复位时间 800ms
-    delay_ms(800);
+    // 上电复位时间 100ms
+    delay_ms(100);
 
     int a = 2, b =3;
     void (* pFn)(int, int*);
