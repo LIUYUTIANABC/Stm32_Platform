@@ -36,6 +36,8 @@
 
 ## ProTimeTriggerSystem_Sch_USART-RS232
 
+- 对应 时间触发嵌入式系统 的 Chapter 18
+
 使用合作式调度器，实现 USART1 和 PC 通过串口助手通信；
 
 - 新的思路：
@@ -50,3 +52,7 @@
   - 1、使用指针，指向数组下标
     - 如何调度 update；需要两个指针，指向已发送和未发送的数组下标
   - 2、“时分秒” 更好的计算方式，用于定时的代码
+
+## ProTimeTriggerSystem_Sch_Key
+
+- 对应 时间触发嵌入式系统 的 Chapter 19
