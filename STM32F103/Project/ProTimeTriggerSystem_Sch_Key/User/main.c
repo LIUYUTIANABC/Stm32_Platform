@@ -76,7 +76,8 @@ int main(void)
     // SCH_Add_Task(SWITCH_ON_OFF_Update, 0, 200);
     // SCH_Add_Task(LedFlashUpdate, 5, 1000);
 
-
+    // *********** Mutil_s *******************
+    // SCH_Add_Task(SWITCH_MS_Update, 0, 200);
 #endif
 
     // 上电复位时间 100ms

@@ -56,3 +56,8 @@
 ## ProTimeTriggerSystem_Sch_Key
 
 - 对应 时间触发嵌入式系统 的 Chapter 19
+
+- 方法
+  - 按键按下 --- Switch_A
+  - 通断开关 --- On_Off
+  - 多状态开关 --- 短按，中长按，长按
