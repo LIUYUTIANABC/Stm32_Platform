@@ -8,6 +8,9 @@
         "systick.h": "c",
         "sch.h": "c",
         "CHAR_MAP.C": "cpp",
-        "BARGRAPH.C": "cpp"
+        "BARGRAPH.C": "cpp",
+        "pc_o_in.h": "c",
+        "main.h": "c",
+        "keypad.h": "c"
     }
 }
