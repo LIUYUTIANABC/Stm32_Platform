@@ -34,6 +34,7 @@
 
 #include "pc_rs232.h"
 #include "usart.h"
+#include "SysTick.h"
 #include "stm32f10x_gpio.h"
 #include "stm32f10x_rcc.h"
 
@@ -74,12 +75,12 @@ void KEYPAD_Init(void)
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-    GPIO_Init(GPIOC, &GPIO_InitStructure);
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_6;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-    GPIO_Init(GPIOC, &GPIO_InitStructure);
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
 
     KEYPAD_in_read_index = 0;
     KEYPAD_in_waiting_index = 0;
@@ -182,6 +183,7 @@ u8 KEYPAD_Scan(u8 *pKey, u8 *pFuncKey)
     u8 Fn_key = (u8)0x00;
 
     KEY_C_0 = 0; // Scanning column 1
+    delay_us(5);
     if (KEY_R_3 == 0)
         Key = '1';
     if (KEY_R_4 == 0)
@@ -193,6 +195,7 @@ u8 KEYPAD_Scan(u8 *pKey, u8 *pFuncKey)
     KEY_C_0 = 1;
 
     KEY_C_1 = 0; // Scanning column 2
+    delay_us(5);
     if (KEY_R_3 == 0)
         Key = '2';
     if (KEY_R_4 == 0)
@@ -204,6 +207,7 @@ u8 KEYPAD_Scan(u8 *pKey, u8 *pFuncKey)
     KEY_C_1 = 1;
 
     KEY_C_2 = 0; // Scanning column 3
+    delay_us(5);
     if (KEY_R_3 == 0)
         Key = '3';
     if (KEY_R_4 == 0)

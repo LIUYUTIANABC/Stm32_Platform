@@ -9,6 +9,7 @@
 #include "T_Lights.h"
 #include "usart.h"
 #include "pc_rs232.h"
+#include "keypad.h"
 
 //------------------------------------------------------------------------
 //- 特性
@@ -60,16 +61,21 @@ int main(void)
 #ifdef FEATURE_SCH
     SCH_Init_TIM4();  // 内部初始化 TIM4 定时 1ms
     Usart1NoInterruptInit(9600);  // 初始化 Usart1
-    // SCH_Add_Task(LedFlashUpdate, 10, 200);   // 1s 闪烁一次
-    // SCH_Add_Task(TRAFFIC_LIGHTS_Update, 0, 1000);
-    // SCH_Add_Task(UsartDebug, 0, 1000);    // 5s 发送一次数据
-    // SCH_Add_Task(UsartDebugRx, 1, 5);
 
-    // We have to schedule this task (10x - 100x a second)
-    // TIMING IS IN TICKS NOT MILLISECONDS (5 ms tick interval)
-    SCH_Add_Task(MENU_Command_Processor,10,2);
-    // Update the time once per second
-    SCH_Add_Task(Elapsed_Time_RS232_Update,1000,200);
+    // Prepare the keypad
+    KEYPAD_Init();
+
+    // Prepare the Keypad -> RS232 library
+    Keypad_RS232_Init();
+
+   // We have to schedule this task (~100x a second is enough here)
+   // - this writes data to PC
+   //
+   // TIMING IS IN TICKS (1 ms tick interval)
+   SCH_Add_Task(PC_LINK_IO_Update, 10, 10);
+
+   // Read the keypad every ~50 ms
+   SCH_Add_Task(Keypad_RS232_Update, 0, 50);
 #endif
 
     // 上电复位时间 800ms

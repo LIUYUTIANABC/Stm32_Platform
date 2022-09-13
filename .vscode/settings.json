@@ -11,6 +11,8 @@
         "BARGRAPH.C": "cpp",
         "pc_o_in.h": "c",
         "main.h": "c",
-        "keypad.h": "c"
+        "keypad.h": "c",
+        "KEYP_232.H": "cpp",
+        "pc_rs232.h": "c"
     }
 }

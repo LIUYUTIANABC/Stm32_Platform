@@ -1,183 +1,70 @@
 #include "pc_rs232.h"
 #include "usart.h"
+#include "keypad.h"
+
+// ------ Private variables ----------------------------------------
+
+u8 Count_G;
 
 /*------------------------------------------------------------------*-
 
-  MENU_Command_Processor()
+  Keypad_RS232_Init()
 
-  This function is the main menu 'command processor' function.
-
-  Schedule this (say) once every 10 ms (approx.).
+  Init function for simple library displaying keypad inputs
+  over serial link.
 
 -*------------------------------------------------------------------*/
-void MENU_Command_Processor(void)
+void Keypad_RS232_Init(void)
 {
-    static u8 First_time_only = 0;
-    u8 Ch;
+    PC_LINK_O_Write_String_To_Buffer("Keypad test code - READY\n");
 
-    if (First_time_only == 0)
-    {
-        First_time_only = 1;
-        MENU_Show_Menu();
-    }
+    Count_G = 0;
 
-    // Check for user inputs
-    PC_LINK_IO_Update();
-
-    Ch = PC_LINK_IO_Get_Char_From_Buffer();
-
-    if (Ch != PC_LINK_IO_NO_CHAR)
-    {
-        MENU_Perform_Task(Ch);
-        MENU_Show_Menu();
-    }
+    KEYPAD_Clear_Buffer();
 }
 
 /*------------------------------------------------------------------*-
 
-  MENU_Show_Menu()
+  Keypad_RS232_Update()
 
-  Display menu options on PC screen (via serial link)
-  - edit as required to meet the needs of your application.
-
--*------------------------------------------------------------------*/
-void MENU_Show_Menu(void)
-{
-    PC_LINK_IO_Write_String_To_Buffer("Menu:\n");
-    PC_LINK_IO_Write_String_To_Buffer("a - x\n");
-    PC_LINK_IO_Write_String_To_Buffer("b - x\n");
-    PC_LINK_IO_Write_String_To_Buffer("c - x\n\n");
-    PC_LINK_IO_Write_String_To_Buffer("? : ");
-}
-
-/*------------------------------------------------------------------*-
-
-  MENU_Perform_Task()
-
-  Perform the required user task
-  - edit as required to match the needs of your application.
+  Function for displaying keypad inputs over serial link.
 
 -*------------------------------------------------------------------*/
-void MENU_Perform_Task(u8 c)
+void Keypad_RS232_Update(void)
 {
-    // Echo the menu option
-    PC_LINK_IO_Write_Char_To_Buffer(c);
-    PC_LINK_IO_Write_Char_To_Buffer('\n');
+    u8 Key, FnKey;
 
-    // Perform the task
-    switch (c)
+    // Update the keypad buffer
+    KEYPAD_Update();
+
+    // Is there any new data in the keypad buffer?
+    if (KEYPAD_Get_Data_From_Buffer(&Key, &FnKey) == 0)
     {
-    case 'a':
-    case 'A':
-    {
-        Function_A();
-        break;
+        // No new data.
+        return;
     }
 
-    case 'b':
-    case 'B':
+    // Function key has been pressed (with another key)
+    if (FnKey)
     {
-        Function_B();
-        break;
-    }
+        PC_LINK_O_Write_Char_To_Buffer('\n');
+        PC_LINK_O_Write_Char_To_Buffer(FnKey);
+        PC_LINK_O_Write_Char_To_Buffer(Key);
+        PC_LINK_O_Write_Char_To_Buffer('\n');
 
-    case 'c':
-    case 'C':
-    {
-        Function_C();
-    }
-    }
-}
-
-/*------------------------------------------------------------------*-
-
-  Placeholder function
-
--*------------------------------------------------------------------*/
-void Function_A(void)
-{
-    PC_LINK_IO_Write_String_To_Buffer("\n* Doing A *\n\n");
-}
-
-/*------------------------------------------------------------------*-
-
-  Placeholder function
-
--*------------------------------------------------------------------*/
-void Function_B(void)
-{
-    PC_LINK_IO_Write_String_To_Buffer("\n* Doing B *\n\n");
-}
-
-/*------------------------------------------------------------------*-
-
-  Placeholder function
-
--*------------------------------------------------------------------*/
-void Function_C(void)
-{
-    PC_LINK_IO_Write_String_To_Buffer("\n* Doing C *\n\n");
-}
-
-// ------ Public variable definitions ------------------------------
-
-u8 Hou_G = 0;
-u8 Min_G = 0;
-u8 Sec_G = 0;
-const u8 CHAR_MAP_G[10] = {'0','1','2','3','4','5','6','7','8','9'};
-
-/*------------------------------------------------------------------*-
-
-  Elapsed_Time_RS232_Update()
-
-  Function for displaying elapsed time on PC Screen.
-
-  *** Must be scheduled once per second ***
-
--*------------------------------------------------------------------*/
-void Elapsed_Time_RS232_Update(void)
-{
-    u8 Time_Str[30] = "\rElapsed time:               ";
-
-    if (++Sec_G == 60)
-    {
-        Sec_G = 0;
-
-        if (++Min_G == 60)
-        {
-            Min_G = 0;
-
-            if (++Hou_G == 24)
-            {
-                Hou_G = 0;
-            }
-        }
-    }
-
-    Time_Str[15] = CHAR_MAP_G[Hou_G / 10];
-    Time_Str[16] = CHAR_MAP_G[Hou_G % 10];
-
-    Time_Str[18] = CHAR_MAP_G[Min_G / 10];
-    Time_Str[19] = CHAR_MAP_G[Min_G % 10];
-
-    Time_Str[21] = CHAR_MAP_G[Sec_G / 10];
-    Time_Str[22] = CHAR_MAP_G[Sec_G % 10];
-
-    // We don't display seconds in this version.
-    // We simply use the seconds data to turn on and off the colon
-    // (between hours and minutes)
-    if ((Sec_G % 2) == 0)
-    {
-        Time_Str[17] = ':';
-        Time_Str[20] = ':';
+        Count_G = 0;
     }
     else
     {
-        Time_Str[17] = ' ';
-        Time_Str[20] = ' ';
-    }
+        // An ordinary key (no function key) has been pressed
+        PC_LINK_O_Write_Char_To_Buffer(Key);
 
-    PC_LINK_IO_Write_String_To_Buffer(Time_Str);
+        if (++Count_G == 10)
+        {
+            PC_LINK_O_Write_Char_To_Buffer('\n');
+            Count_G = 0;
+        }
+    }
 }
 
 /*------------------------------------------------------------------*-
