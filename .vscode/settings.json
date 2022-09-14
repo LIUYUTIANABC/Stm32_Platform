@@ -13,6 +13,7 @@
         "main.h": "c",
         "keypad.h": "c",
         "KEYP_232.H": "cpp",
-        "pc_rs232.h": "c"
+        "pc_rs232.h": "c",
+        "PORT.H": "cpp"
     }
 }
