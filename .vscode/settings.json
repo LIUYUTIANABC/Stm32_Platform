@@ -14,6 +14,7 @@
         "keypad.h": "c",
         "KEYP_232.H": "cpp",
         "pc_rs232.h": "c",
-        "PORT.H": "cpp"
+        "PORT.H": "cpp",
+        "DELAY_T0.C": "cpp"
     }
 }

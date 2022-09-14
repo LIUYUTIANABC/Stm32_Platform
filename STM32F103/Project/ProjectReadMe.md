@@ -75,3 +75,8 @@
 - 方法
   - 1、按鍵扫描方法 - 多级任务
   - 2、队列的数据的，存，取方法
+
+## ProTimeTriggerSystem_Sch_LED_Scan
+
+- 对应 时间触发嵌入式系统 的 Chapter 21
+- LED 组成七段数码管，外加一个 . ，即 8 段数码管
