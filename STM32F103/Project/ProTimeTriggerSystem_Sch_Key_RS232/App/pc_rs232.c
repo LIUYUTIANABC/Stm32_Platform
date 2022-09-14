@@ -16,7 +16,7 @@ u8 Count_G;
 -*------------------------------------------------------------------*/
 void Keypad_RS232_Init(void)
 {
-    PC_LINK_O_Write_String_To_Buffer("Keypad test code - READY\n");
+    PC_LINK_IO_Write_String_To_Buffer("Keypad test code - READY\n");
 
     Count_G = 0;
 
@@ -47,21 +47,21 @@ void Keypad_RS232_Update(void)
     // Function key has been pressed (with another key)
     if (FnKey)
     {
-        PC_LINK_O_Write_Char_To_Buffer('\n');
-        PC_LINK_O_Write_Char_To_Buffer(FnKey);
-        PC_LINK_O_Write_Char_To_Buffer(Key);
-        PC_LINK_O_Write_Char_To_Buffer('\n');
+        PC_LINK_IO_Write_Char_To_Buffer('\n');
+        PC_LINK_IO_Write_Char_To_Buffer(FnKey);
+        PC_LINK_IO_Write_Char_To_Buffer(Key);
+        PC_LINK_IO_Write_Char_To_Buffer('\n');
 
         Count_G = 0;
     }
     else
     {
         // An ordinary key (no function key) has been pressed
-        PC_LINK_O_Write_Char_To_Buffer(Key);
+        PC_LINK_IO_Write_Char_To_Buffer(Key);
 
         if (++Count_G == 10)
         {
-            PC_LINK_O_Write_Char_To_Buffer('\n');
+            PC_LINK_IO_Write_Char_To_Buffer('\n');
             Count_G = 0;
         }
     }
