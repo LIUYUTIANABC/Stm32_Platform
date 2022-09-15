@@ -76,7 +76,14 @@
   - 1、按鍵扫描方法 - 多级任务
   - 2、队列的数据的，存，取方法
 
+- 注意事项：
+  - 按键的 IO 口使用了 PB2 和 PB3，不能正常使用
+  - PB2 和 BOOT1 共用 IO 口，复位之后是 PB2/BOOT1
+    - BOOT0 和 BOOT1 不能做普通 IO 使用
+  - PB3 复位之后默认是 JTDO 是 JTAG 的调试脚
+    - PB3 要做为普通 IO 使用，需要禁止 JTAG 的调试功能，使用 SWD 调试
+
 ## ProTimeTriggerSystem_Sch_LED_Scan
 
 - 对应 时间触发嵌入式系统 的 Chapter 21
-- LED 组成七段数码管，外加一个 . ，即 8 段数码管
+- LED 组成七段数码管，外加'.'，即 8 段数码管
