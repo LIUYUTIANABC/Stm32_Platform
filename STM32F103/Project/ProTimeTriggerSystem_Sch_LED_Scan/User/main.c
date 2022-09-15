@@ -7,6 +7,7 @@
 #include "iwdg.h"
 #include "Sch.h"
 #include "T_Lights.h"
+#include "led_scan.h"
 
 //------------------------------------------------------------------------
 //- 特性
@@ -57,8 +58,18 @@ int main(void)
 #endif
 #ifdef FEATURE_SCH
     SCH_Init_TIM4();  // 内部初始化 TIM4 定时 1ms
-    // SCH_Add_Task(LedFlashUpdate, 0, 1000);
-    SCH_Add_Task(TRAFFIC_LIGHTS_Update, 0, 1000);
+
+    LedScanInit();
+
+    // Add the 'Time Update' task (once per second)
+    // - timings are in ticks (1 ms tick interval)
+    // (Max interval / delay is 65535 ticks)
+    SCH_Add_Task(CLOCK_LED_Time_Update,1,1000);
+
+    // Add the 'Display Update' task (once per second)
+    // Need to update a 4-segment display every 3 ms (approx)
+    // Need to update a 2-segment display every 6 ms (approx)
+    SCH_Add_Task(LED_MX4_Display_Update,0,3);
 #endif
 
     // 上电复位时间 800ms
