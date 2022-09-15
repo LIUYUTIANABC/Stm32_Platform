@@ -34,10 +34,10 @@
    To display decimal point, add 10 (decimal) to the above values  */
 
 // Any combination of (4) pins on any ports may be used here
-#define LED_DIGIT_0 PBout(4)
-#define LED_DIGIT_1 PBout(5)
-#define LED_DIGIT_2 PBout(6)
-#define LED_DIGIT_3 PBout(7)
+#define LED_DIGIT_0 PBout(0)
+#define LED_DIGIT_1 PBout(1)
+#define LED_DIGIT_2 PBout(5)
+#define LED_DIGIT_3 PBout(6)
 
 void LedScanInit(void);
 void LED_MX4_Display_Update(void);

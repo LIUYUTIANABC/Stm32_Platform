@@ -457,6 +457,11 @@
               <FileType>1</FileType>
               <FilePath>.\App\T_lights.c</FilePath>
             </File>
+            <File>
+              <FileName>led_scan.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\App\led_scan.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

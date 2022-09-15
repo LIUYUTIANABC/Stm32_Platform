@@ -19,7 +19,7 @@ u8 LED_Mx4_Data_G[4] = {0x3F, 0x3F, 0x3F, 0x3F};
 static u8 Digit_G;
 
 // Time variables
-static tByte Hou_G, Min_G, Sec_G;
+static u8 Hou_G, Min_G, Sec_G;
 
 /*************************************************************************
  * Name: LedScanInit
@@ -33,7 +33,7 @@ void LedScanInit(void)
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7 |
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_5 | GPIO_Pin_6 |
                                   GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 | GPIO_Pin_11 |
                                   GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
@@ -54,9 +54,9 @@ void LedScanInit(void)
 void LED_MX4_Display_Update(void)
 {
     u16 l_LedDataTemp = 0;
-    u16 l_LedDataTemp_1 = 0;
-    u16 l_LedDataTemp_2 = 0;
-    u16 l_LedDataTemp_3 = 0;
+    // u16 l_LedDataTemp_1 = 0;
+    // u16 l_LedDataTemp_2 = 0;
+    // u16 l_LedDataTemp_3 = 0;
 
     // Increment the digit to be displayed
     if (++Digit_G == LED_NUM_DIGITS)
@@ -104,9 +104,9 @@ void LED_MX4_Display_Update(void)
     }
 
     // LED_DATA_PORT = 255 - LED_Mx4_Data_G[Digit_G];
-    l_LedDataTemp_3 = GPIO_ReadOutputData(GPIOB);
-    l_LedDataTemp_1 = (u8)GPIO_ReadOutputData(GPIOB);
-    l_LedDataTemp_2 = ((u16)(0xFF - LED_Mx4_Data_G[Digit_G]) << 8);
+    // l_LedDataTemp_3 = GPIO_ReadOutputData(GPIOB);
+    // l_LedDataTemp_1 = (u8)GPIO_ReadOutputData(GPIOB);
+    // l_LedDataTemp_2 = ((u16)(0xFF - LED_Mx4_Data_G[Digit_G]) << 8);
     l_LedDataTemp = ((u16)(0xFF - LED_Mx4_Data_G[Digit_G]) << 8) + (u8)GPIO_ReadOutputData(GPIOB);
     GPIO_Write(GPIOB, l_LedDataTemp);
 }
