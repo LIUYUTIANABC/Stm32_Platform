@@ -72,12 +72,22 @@
     - 将数据缓存到队列当中，外部只操作队列
   - 3、二维指针的使用
 
+```
+// 函数参数是指针，可以改变值
+u8 KEYPAD_Scan(char* const pKey, char* const pFuncKey)
+KEYPAD_Scan(&Key, &FnKey);
+
+// Load keypad data into buffer
+KEYPAD_recv_buffer[KEYPAD_in_waiting_index][0] = Key;
+KEYPAD_recv_buffer[KEYPAD_in_waiting_index][1] = FnKey;
+```
+
 - 方法
   - 1、按鍵扫描方法 - 多级任务
   - 2、队列的数据的，存，取方法
 
 - 注意事项：
-  - 按键的 IO 口使用了 PB2 和 PB3，不能正常使用
+  - STM32 做按键的 IO 口使用了 PB2 和 PB3，不能正常使用
   - PB2 和 BOOT1 共用 IO 口，复位之后是 PB2/BOOT1
     - BOOT0 和 BOOT1 不能做普通 IO 使用
   - PB3 复位之后默认是 JTDO 是 JTAG 的调试脚
@@ -87,3 +97,32 @@
 
 - 对应 时间触发嵌入式系统 的 Chapter 21
 - LED 组成七段数码管，外加'.'，即 8 段数码管
+
+方法：
+
+- 时分秒 的计算方法，使用存储在 flash 里面的数组存储不变变量
+
+```
+// 存储不变的变量，使用 const 修饰，数据存放在 flash（ROM）中
+tByte code LED_Table_G[20] =
+// 0     1     2     3     4     5     6     7     8     9
+{0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F,
+// 0.    1.    2.    3.    4.    5.    6.    7.    8.    9.
+ 0xBF, 0x86, 0xDB, 0xCF, 0xE6, 0xED, 0xFD, 0x87, 0xFF, 0xEF};
+
+// 存储 可变的变量，普通变量，数据存放在 RAM（全局变量）或 堆栈（局部变量）中
+// Global data formatted for display (initially 0,0,0,0)
+tByte LED_Mx4_Data_G[4] = {0x3F,0x3F,0x3F,0x3F};
+
+LED_Mx4_Data_G[1] = LED_Table_G[Min_G / 10];
+LED_Mx4_Data_G[0] = LED_Table_G[Min_G % 10];
+```
+
+- 多路复用的方式扫描
+- 端口取反的方法
+
+```
+// 数据取反：
+LED_DATA_PORT = 255 - LED_Mx4_Data_G[Digit_G];
+```
+
