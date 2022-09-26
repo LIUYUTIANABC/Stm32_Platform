@@ -18,6 +18,8 @@
         "DELAY_T0.C": "cpp",
         "I2C_ROM.H": "cpp",
         "I2C_CORE.H": "cpp",
-        "I2C_CORE.C": "cpp"
+        "I2C_CORE.C": "cpp",
+        "SPI_CORE.C": "cpp",
+        "SPI_X25.C": "cpp"
     }
 }
