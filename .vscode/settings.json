@@ -15,6 +15,9 @@
         "KEYP_232.H": "cpp",
         "pc_rs232.h": "c",
         "PORT.H": "cpp",
-        "DELAY_T0.C": "cpp"
+        "DELAY_T0.C": "cpp",
+        "I2C_ROM.H": "cpp",
+        "I2C_CORE.H": "cpp",
+        "I2C_CORE.C": "cpp"
     }
 }
