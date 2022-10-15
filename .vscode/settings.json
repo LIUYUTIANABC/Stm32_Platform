@@ -20,6 +20,7 @@
         "I2C_CORE.H": "cpp",
         "I2C_CORE.C": "cpp",
         "SPI_CORE.C": "cpp",
-        "SPI_X25.C": "cpp"
+        "SPI_X25.C": "cpp",
+        "BARGRAPH.H": "cpp"
     }
 }
