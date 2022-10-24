@@ -23,6 +23,7 @@
         "SPI_X25.C": "cpp",
         "BARGRAPH.H": "cpp",
         "MAIN.C": "cpp",
-        "PWM_515C.C": "cpp"
+        "PWM_515C.C": "cpp",
+        "Speech.C": "cpp"
     }
 }
