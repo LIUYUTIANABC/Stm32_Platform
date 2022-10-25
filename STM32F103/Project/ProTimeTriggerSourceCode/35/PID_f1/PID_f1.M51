@@ -1,0 +1,135 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        08/23/2013  14:51:28  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+E:\PROGRAM FILES\KEIL\C51\BIN\BL51.EXE MAIN.obj, PID_f1.obj TO PID_f1 CODE (0X0000-0X0FFF)
+
+
+MEMORY MODEL: SMALL WITH FLOATING POINT ARITHMETIC
+
+
+INPUT MODULES INCLUDED:
+  MAIN.obj (MAIN)
+  PID_f1.obj (PID_F1)
+  E:\PROGRAM FILES\KEIL\C51\LIB\C51FPS.LIB (?C?FPADD)
+  E:\PROGRAM FILES\KEIL\C51\LIB\C51FPS.LIB (?C?FPMUL)
+  E:\PROGRAM FILES\KEIL\C51\LIB\C51FPS.LIB (?C?FPCMP)
+  E:\PROGRAM FILES\KEIL\C51\LIB\C51FPS.LIB (?C?FPGETOPN)
+  E:\PROGRAM FILES\KEIL\C51\LIB\C51S.LIB (?C_STARTUP)
+
+
+LINK MAP OF MODULE:  PID_f1 (MAIN)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0018H     UNIT         _DATA_GROUP_
+            DATA    0020H     0008H     UNIT         ?DT?PID_F1
+            IDATA   0028H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     02B5H     UNIT         ?C?LIB_CODE
+            CODE    02B8H     0113H     UNIT         ?PR?_PID_CONTROL?PID_F1
+            CODE    03CBH     0021H     UNIT         ?PR?MAIN?MAIN
+            CODE    03ECH     000CH     UNIT         ?C_C51STARTUP
+
+
+
+OVERLAY MAP OF MODULE:   PID_f1 (MAIN)
+
+
+SEGMENT                           DATA_GROUP 
+  +--> CALLED SEGMENT           START    LENGTH
+-----------------------------------------------
+?C_C51STARTUP                   -----    -----
+  +--> ?PR?MAIN?MAIN
+
+?PR?MAIN?MAIN                   0008H    000CH
+  +--> ?PR?_PID_CONTROL?PID_F1
+
+?PR?_PID_CONTROL?PID_F1         0014H    000CH
+
+
+
+SYMBOL TABLE OF MODULE:  PID_f1 (MAIN)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+BL51 BANKED LINKER/LOCATER V6.22                                                      08/23/2013  14:51:28  PAGE 2
+
+
+
+  -------         MODULE        MAIN
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  C:03CBH         PUBLIC        main
+  -------         PROC          MAIN
+  -------         DO            
+  D:0008H         SYMBOL        x
+  D:000CH         SYMBOL        y
+  D:0010H         SYMBOL        z
+  -------         ENDDO         
+  C:03CBH         LINE#         32
+  C:03CBH         LINE#         33
+  C:03CBH         LINE#         36
+  C:03CBH         LINE#         37
+  C:03CBH         LINE#         38
+  C:03EAH         LINE#         39
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        MAIN
+
+  -------         MODULE        PID_F1
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  C:02B8H         PUBLIC        _PID_Control
+  D:0020H         SYMBOL        Old_error_G
+  D:0024H         SYMBOL        Sum_G
+  -------         PROC          _PID_CONTROL
+  D:0014H         SYMBOL        Error
+  D:0018H         SYMBOL        Control_old
+  -------         DO            
+  D:001CH         SYMBOL        Control_new
+  -------         ENDDO         
+  C:02B8H         LINE#         51
+  C:02C0H         LINE#         52
+  C:02C0H         LINE#         54
+  C:02E6H         LINE#         57
+  C:0301H         LINE#         58
+  C:0337H         LINE#         61
+  C:0378H         LINE#         64
+  C:038EH         LINE#         65
+  C:038EH         LINE#         66
+  C:0399H         LINE#         67
+  C:039BH         LINE#         69
+  C:039BH         LINE#         70
+  C:03ADH         LINE#         71
+  C:03ADH         LINE#         72
+  C:03B6H         LINE#         73
+  C:03B6H         LINE#         74
+  C:03B6H         LINE#         77
+  C:03C2H         LINE#         79
+  C:03CAH         LINE#         80
+  -------         ENDPROC       _PID_CONTROL
+  -------         ENDMOD        PID_F1
+
+  -------         MODULE        ?C?FPADD
+  C:000AH         PUBLIC        ?C?FPADD
+  C:0006H         PUBLIC        ?C?FPSUB
+  -------         ENDMOD        ?C?FPADD
+
+BL51 BANKED LINKER/LOCATER V6.22                                                      08/23/2013  14:51:28  PAGE 3
+
+
+  -------         MODULE        ?C?FPMUL
+  C:00FBH         PUBLIC        ?C?FPMUL
+  -------         ENDMOD        ?C?FPMUL
+
+  -------         MODULE        ?C?FPCMP
+  C:0203H         PUBLIC        ?C?FPCMP
+  C:0201H         PUBLIC        ?C?FPCMP3
+  -------         ENDMOD        ?C?FPCMP
+
+Program Size: data=41.0 xdata=0 code=1016
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
