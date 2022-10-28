@@ -214,3 +214,19 @@ Kile5-MDK 的调试，下载魔术棒配置
 
 - https://blog.csdn.net/qzf1603/article/details/120160143
 - https://blog.csdn.net/weixin_43739167/article/details/106680146
+
+## 单片机三种烧录方式ICP、IAP和ISP详解
+
+参考网址：
+
+- https://zhuanlan.zhihu.com/p/69237591
+
+- 1、ICP(In Circuit Programing)在电路编程
+  - 面对的是电路，需要硬件支持；使用 Jtag 或者 SWD 协议；
+  - 因此，需要像 ST-Link，J-Link，Nu-Link 之类的工具
+  - 同时，需要上位机软件
+- 2、ISP(In System Programing)在系统编程
+  - 面向的是系统；使用 UART，USB，SPI 等串口协议
+  - 通过引导代码（Bootload），下载程序到 MCU 中；也需要上位机软件，比如：STC-ISP；PZ-ISP 等
+- 3、IAP(In applicating Programing)在应用编程
+  - 面向的是应用；即在线更新软件；把 flash 映射成两个存储体，运行一个，更新另一个
