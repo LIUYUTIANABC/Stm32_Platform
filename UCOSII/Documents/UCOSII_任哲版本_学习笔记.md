@@ -5,6 +5,7 @@
   - [第一章：嵌入式实时操作系统的概念](#第一章嵌入式实时操作系统的概念)
   - [第二章：预备知识](#第二章预备知识)
     - [开发工具](#开发工具)
+      - [学习 GCC](#学习-gcc)
 
 ## 前言
 
@@ -28,7 +29,7 @@
 - 这本书的出版时间是 2006 年，BC3.1 是一款比较老的软件，基本现在都淘汰不用
 - 现在比较流行的是 GCC 所以，要先学习 GCC 编译 C 文件
 
-学习 GCC
+#### 学习 GCC
 
 参考网址：https://blog.csdn.net/qq_42475711/article/details/85224010
 
@@ -88,3 +89,40 @@ GCC 常用指令讲解
     - 使用命令：gcc -c Test.c -o Test.o 生成 Test.o 二进制文件；这里编译器自动对 Test.c 做预处理和编译操作
     - 使用命令：ar -rcs libTest.a Test.o  生成静态库
     - 使用命令：gcc Demo.o libTest.a -o Demo.exe 链接的时候，指明需要的静态库
+
+总结：
+
+- GCC 工作流程分成 4 步：hello.c -> hello.i -> hello.s -> hello.o -> hello.exe
+  - 预处理（-E），生成 .i 文件
+    - 宏替换；头文件展开；注释去掉；
+    - 命令：gcc -E hello.c -o hello.i
+  - 编译（-S），生成汇编文件 .s
+    - 命令：gcc -S hello.i -o hello.s
+  - 汇编（-c），生成二进制文件 .out
+    - 命令：gcc -c hello.s -o hello.o
+  - 链接，生成可执行文件 .exe
+    - gcc hello.o -o hello
+  - 通常一句命令：gcc hello.c -o hello; 可以直接转换成 .exe 文件，中间过程编译器会自动做
+- 语法检错在编译阶段，预处理阶段只是宏替换；头文件展开；注释去掉；
+- GCC 常用参数
+  - gcc -v  查看GCC 版本
+  - -I 指定头文件路径；如果头文件不在相同目录下，可以用 -I 包含
+    - 命令：gcc hello.c -o hello -I ./include
+  - -o 指定生成的程序的名称
+    - gcc hello.c -o hello.exe
+  - -g 使用gdb调试的时候必须加的参数；可以输出程序错误的文件名和行号
+    - gcc -g Demo.c -o Demo.exe
+  - -D 在编译的时候指定一个宏；传递这个宏到程序中
+    - gcc test.c -o test -D DEBUG
+  - -Wall 显示警告信息；gcc 默认不会显示警告
+    - gcc -Wall Demo.c -o Demo.exe
+- 强烈推荐编译 .c 文件命令：gcc -g -Wall Demo.c -o Demo.exe
+  - 包含警告信号和错误提示文件行号
+- 多个参数：gcc -g -Wall Demo.c -o Demo.exe -I .\include -D DEBUG_D
+  - -I 包含头文件路径 .\include；-D 传递宏 DEBUG_D 到程序
+- 如果有多个 .c 文件，在 main 中是不能调用的，因为找不到函数定义
+  - 解决方法：将 .c 封装成静态库供其调用
+  - 1、命令：gcc -c Test.c -o Test.o; 先把多个 .c 文件都转换为 .o 文件
+  - 2、命令：ar -rcs libTest.a Test.o Test_1.o; 把 Test.o 和 Test_1.o 生成静态库 libTest.a
+  - 3、命令：gcc Demo.c libTest.a -o Demo.exe 链接的时候，指明使用的静态库
+  - 常用命令：gcc -g -Wall Demo.c .\include\libTest.a -o Demo.exe -I .\include -D DEBUG_D
