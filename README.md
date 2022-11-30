@@ -31,7 +31,11 @@
 
 ## UCOSII
 
-- 学习 UCOSII 笔记和工程
+- Documents：UCOSII 学习笔记；任哲版本
+- Projects
+  - GCC_Demo；熟悉 GCC 编译 C 语言代码；因为任哲书中使用 Borland，已经被淘汰，使用 GCC；
+    - Demo_HelloWorld; 基本使用
+    - Demo_Two_C_files; 编译多个文件
 
 ## STM32 寻找资源
 

@@ -6,6 +6,7 @@
   - [第二章：预备知识](#第二章预备知识)
     - [开发工具](#开发工具)
       - [学习 GCC](#学习-gcc)
+      - [学习 make 及 makefile](#学习-make-及-makefile)
 
 ## 前言
 
@@ -126,3 +127,20 @@ GCC 常用指令讲解
   - 2、命令：ar -rcs libTest.a Test.o Test_1.o; 把 Test.o 和 Test_1.o 生成静态库 libTest.a
   - 3、命令：gcc Demo.c libTest.a -o Demo.exe 链接的时候，指明使用的静态库
   - 常用命令：gcc -g -Wall Demo.c .\include\libTest.a -o Demo.exe -I .\include -D DEBUG_D
+- 代码路径：\Projects\GCC_Demo\Demo_HelloWorld
+
+编译多个源文件
+
+- 参考网址：https://www.cnblogs.com/postw/p/9670805.html
+- 在同一路径下，创建多个 .c 源文件，如何编译？
+  - 把 .c 文件都写到命令里面：gcc -g -Wall main.c hello.c -o main
+- 代码路径：\Projects\GCC_Demo\Demo_Two_C_files
+
+#### 学习 make 及 makefile
+
+- make 工具：工程管理工具；通过脚本 makefile 管理工程项目
+  - IDE 也使用 make 工具，只是隐藏起来了；
+- makefile：就是对源文件进行编译和连接的脚本；用 DOS 命令写出来的文件
+  - makefile 有自己的编码规则，在 DOS 中调用
+
+
