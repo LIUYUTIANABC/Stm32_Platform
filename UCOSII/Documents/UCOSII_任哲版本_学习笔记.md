@@ -138,9 +138,105 @@ GCC 常用指令讲解
 
 #### 学习 make 及 makefile
 
-- make 工具：工程管理工具；通过脚本 makefile 管理工程项目
+- make 工具：工程管理工具；通过脚本 makefile 管理工mingw32-make程项目
   - IDE 也使用 make 工具，只是隐藏起来了；
 - makefile：就是对源文件进行编译和连接的脚本；用 DOS 命令写出来的文件
   - makefile 有自己的编码规则，在 DOS 中调用
+
+GCC make 工具的安装
+
+- 在安装 GCC 的时候，要安装包 'mingw32-base-bin' 这个包里面有 'mingw32-make.exe' 就是 make
+- 在目录 C:\MinGW\bin 中把 'mingw32-make.exe' 改名为 'make.exe'; 或 copy 一份再改名都行
+
+编写 makefile：
+
+- 直接使用 make 默认执行第一个程序标号：target1
+- 命令集中的所有命令都用 TAB 开头，不能用空格
+
+```
+## example 1：
+target1:
+	md 11
+target2:
+	md 22
+target3:
+	rd 11
+	rd 22
+
+## example 2：
+######################################################################
+# 创建 makefile 可执行文件
+######################################################################
+Get_main.exe:
+	gcc -g -Wall main.c -o main.exe
+	.\main.exe
+Get_main.i:
+	gcc -E main.c -o main.i
+Get_main.s:
+	gcc -S main.c -o main.s
+Get_main.o:
+	gcc -c main.c -o main.o
+Clean:
+	del main.i
+	del main.s
+	del main.o
+```
+
+- 为 makefile 的 target 添加依赖文件；
+  - 依赖文件：就是执行 target 前需要先做的其他 target；
+  - 通过时间戳判断；如果这些其他 target 文件没有更新，则跳过，有更新则编译，提高开发效率
+
+```
+######################################################################
+# 创建 makefile 可执行文件
+######################################################################
+Get_main.exe: Get_main.i Get_main.s Get_main.o
+	gcc -g -Wall main.c -o main.exe
+	.\main.exe
+Get_main.i: main.c main.h
+	gcc -E main.c -o main.i
+Get_main.s: main.c main.h
+	gcc -S main.c -o main.s
+Get_main.o: main.c main.h
+	gcc -c main.c -o main.o
+Clean:
+	del main.i
+	del main.s
+	del main.o
+```
+
+- 伪目标
+  - 使用 makefile 是创建目标文件的，但是有些需要添加路径、文件或需要清理文件
+  - 这些操作不是真正的 target 所以叫伪目标
+  - 使用 .PHONY: 定义伪目标；这样可以防止文件名和伪目标名一致时，导致伪目标无法执行
+
+```
+######################################################################
+# 创建 makefile 可执行文件
+######################################################################
+Get_main.exe: Get_main.i Get_main.s Get_main.o
+	gcc -g -Wall main.c -o main.exe
+	.\main.exe
+Get_main.i: main.c main.h
+	gcc -E main.c -o main.i
+Get_main.s: main.c main.h
+	gcc -S main.c -o main.s
+Get_main.o: main.c main.h
+	gcc -c main.c -o main.o
+# 使用 .PHONY: 定义伪目标
+.PHONY: Clean Clean1
+Clean:
+	del main.i
+Clean1:
+	del main.s
+	del main.o
+```
+
+- makefile 文件的命名
+  - makefile 是 make 工具的默认调用文件; 用户也可以使用 make 调用任意文件
+  - 该文件里面按照 make 语法编写脚本，可以保存为任意扩展名
+  - 命令：make -f 文件名(包括扩展名)；
+    - 例子：make -f makeV2.txt； make -f makeV2.ps1；
+
 
 
