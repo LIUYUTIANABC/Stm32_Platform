@@ -138,6 +138,8 @@ GCC 常用指令讲解
 
 #### 学习 make 及 makefile
 
+参考网址：https://blog.csdn.net/FRS2023/article/details/120839849
+
 - make 工具：工程管理工具；通过脚本 makefile 管理工mingw32-make程项目
   - IDE 也使用 make 工具，只是隐藏起来了；
 - makefile：就是对源文件进行编译和连接的脚本；用 DOS 命令写出来的文件
@@ -237,6 +239,22 @@ Clean1:
   - 该文件里面按照 make 语法编写脚本，可以保存为任意扩展名
   - 命令：make -f 文件名(包括扩展名)；
     - 例子：make -f makeV2.txt； make -f makeV2.ps1；
+- makefile 变量的赋值；在 makefile 里面所有的变量都是字符串
+  - 赋值: name = rick  引用：$(name)
+  - '='; 可以赋值字符串，也可以赋值另一个变量
+    -  赋值：name = rick;
+    - 另一个变量：name_1 = $(name)
+  - ':='; 使用 := 赋值的变量，始终不变，后面再对该变量赋值无效
+  - '?='; 如果前面没有被赋值，那么就是 ?= 后的变量，如果之前已经被赋值了，那么就使用前面赋的值
+  - '+='; 追加变量；
 
+```
+name = rick
+curname = ENG
+name += $(curname)
 
+Print:
+	echo $(name)
+	echo $(curname)
+```
 

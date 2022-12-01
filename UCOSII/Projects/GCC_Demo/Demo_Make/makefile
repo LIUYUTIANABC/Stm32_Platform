@@ -17,3 +17,11 @@ Clean:
 Clean1:
 	del main.s
 	del main.o
+
+name = rick
+curname = eng
+name += $(curname)
+
+Print:
+	echo $(name)
+	echo $(curname)
