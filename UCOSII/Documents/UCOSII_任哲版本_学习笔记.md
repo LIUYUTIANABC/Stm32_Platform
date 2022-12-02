@@ -7,6 +7,7 @@
     - [开发工具](#开发工具)
       - [学习 GCC](#学习-gcc)
       - [学习 make 及 makefile](#学习-make-及-makefile)
+      - [批处理文件](#批处理文件)
 
 ## 前言
 
@@ -256,5 +257,29 @@ name += $(curname)
 Print:
 	echo $(name)
 	echo $(curname)
+```
+
+#### 批处理文件
+
+- 创建批处理文件：创建一个 .txt 文本文件，另存为 .bat 文件就可以了
+  - .bat 文件就是批处理文件
+- 代码路径：\Projects\GCC_Demo\Demo_Bat
+
+```
+@ECHO OFF
+ECHO ********************************************
+ECHO *  Batch file
+ECHO ********************************************
+MD WORK
+MD OBJ
+CD WORK
+COPY ..\..\Demo_Make\makefile makeV2.MAK
+make -f makeV2.MAK
+CD ..\
+DEL WORK
+DEL OBJ
+RD .\WORK
+RD .\OBJ
+PAUSE
 ```
 
