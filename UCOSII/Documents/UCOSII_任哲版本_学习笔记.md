@@ -283,3 +283,8 @@ RD .\OBJ
 PAUSE
 ```
 
+- Powershell 脚本包含所有批处理文件 bat 中的内容，且更加强大，有 .net 的加持
+  - 所以，基本上以后会用 PS 取代 bat 进行操作，并且 PS 更好用
+  - bat 可以直接调用 PS 脚本
+- 运行 bat 或在 PS 中运行脚本，使用 GCC 创建 Hello World 程序
+- 代码路径：\Projects\BatAndMake
