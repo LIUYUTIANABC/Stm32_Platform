@@ -36,6 +36,10 @@
   - GCC_Demo；熟悉 GCC 编译 C 语言代码；因为任哲书中使用 Borland，已经被淘汰，使用 GCC；
     - Demo_HelloWorld; 基本使用
     - Demo_Two_C_files; 编译多个文件
+    - Demo_Make；使用 make 工具和 makefile 调用 GCC 编译 main.c
+    - Demo_Bat；批处理 .bat 文件的编写
+  - BatAndMake；写 PowerShell 脚本批处理文件，通过 GCC 编译 main.c，自动生成程序框架
+  - UcosIIBook_2-8；对应任哲书中的 2-8 程序代码；了解 TCB 结构体
 
 ## STM32 寻找资源
 
