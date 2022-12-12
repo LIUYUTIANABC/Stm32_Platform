@@ -40,6 +40,10 @@
     - Demo_Bat；批处理 .bat 文件的编写
   - BatAndMake；写 PowerShell 脚本批处理文件，通过 GCC 编译 main.c，自动生成程序框架
   - UcosIIBook_2-8；对应任哲书中的 2-8 程序代码；了解 TCB 结构体
+  - UcosIIBook_3_6；对应任哲书中的 3-6 程序代码；程序在 WIN10 不能使用，因为书中是 XP 系统的编译环境
+  - STM32F103C8T6_UCOSIII；移植 UCOSIII 到 STM32F103C8T6 当中
+    - project：工程文件
+      - ProBasicFunction: 基础工程，库函数点亮 LED
 
 ## STM32 寻找资源
 
