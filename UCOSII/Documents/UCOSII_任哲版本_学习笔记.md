@@ -17,6 +17,11 @@
     - [3.4 任务就绪表及任务调度](#34-任务就绪表及任务调度)
     - [3.5 任务的创建](#35-任务的创建)
     - [3.6 任务的挂起和恢复](#36-任务的挂起和恢复)
+    - [3.7 其他任务管理函数](#37-其他任务管理函数)
+    - [3.8 uCOSII 的初始化和任务的启动](#38-ucosii-的初始化和任务的启动)
+  - [第四章：uC/OS-II 的中断和时钟](#第四章ucos-ii-的中断和时钟)
+    - [4.1 uCOSII 的中断](#41-ucosii-的中断)
+    - [4.2 uCOSII 的时钟](#42-ucosii-的时钟)
 
 ## 前言
 
@@ -556,5 +561,78 @@ PAUSE
   - 加锁解锁必须成对使用
 - 代码参考：
 
+### 3.7 其他任务管理函数
+
+- 任务优先级的修改 OSTaskChangePrio()
+  - 任务的优先级可以改变，调用 INT8U OSTaskChangePrio(INT8U oldprio, INT8U newprio) 进行修改
+  - 成功则返回值：OS_NO_ERR
+- 任务删除：就是让任务进入睡眠状态；将该任务的任务控制块链表，归还给空任务控制块链表；把就绪状态置 0、
+  - INT8U OSTaskDel(INT8U prio); prio:要删除的任务优先级
+  - 由于删除的任务，可能占用系统共用资源等；为避免删除任务时，把共用资源删除，以下解决办法
+    - 任务提出删除其他任务请求，其他任务在内部根据请求删除自身
+    - 因此需要双方通信确定删除方，与被删除方；
+  - 提出删除任务请求：INT8U OSTaskDelReq(INT8U prio)
+  - 任务控制块成员：OSTCBDelReq 存储删除请求状态
+  - 调用 OSTaskDelReq() 有两种参数
+    - 1、删除其他任务：参数是 其他任务优先级 prio; 返回值是 OS_TASK_NOT_EXIST
+    - 2、删除自身：参数是：OS_PRIO_SELF; 返回值是 OS_TASK_DEL_REQ
+  - OSTimeDly(1); 延时一个时钟节拍
+
+![img](./img/2022-12-10_Task_del_1.jpg)
+![img](./img/2022-12-10_Task_del_2.jpg)
+![img](./img/2022-12-10_Task_del_3.jpg)
+
+- 查询任务的信息：获得该任务的任务控制块
+  - INT8U OSTaskQuery(INT8U prio, OS_TCB * pdata)
+  - 参数 prio：要查询的优先级号
+  - 参数 pdata：把该优先级的 任务控制块存储到 pdata 这个指针中
+
+### 3.8 uCOSII 的初始化和任务的启动
+
+- uCOSII 的初始化；OSInit()
+  - 初始化所有全局变量；OSPrioCur，OSPrioHighRdy，OSTime....
+  - 初始化空链表和其余4个链表；OSTCBFreeList
+  - 初始化空闲任务，或统计任务；默认空闲任务在最低优先级（OS_LOWEST_PRIO）;
+    - 统计任务，需要使能 OS_TASK_STAT_EN=1 默认在次最低有优先级（OS_LOWEST_PRIO-1）
+  - 初始化任务就绪表，任务控制块优先级数组 OSTCBPrioTb1[OS_LOWEST_PRIO+1]
+
+![img](./img/2022-12-10_OS_Init_1.jpg)
+
+- uCOSII 的启动；OSStart()
+  - 设置 OSRunning=TRUE，并把最高优先级任务的栈指针，任务控制块加载到 CPU
+  - 强制中断返回，使系统运行
+
+![img](./img/2022-12-10_OS_Init_2.jpg)
+
+## 第四章：uC/OS-II 的中断和时钟
+
+### 4.1 uCOSII 的中断
+
+- uCOSII 是可剥夺型的内核；中断服务子程序运行结束后，系统会进行一次任务调度，运行优先级最高的就绪任务，不一定是返回之前任务
+- uCOSII 允许中断嵌套，OSIntNesting 记录中断嵌套的层数
+- OSIntEnter(void) 使 OSIntNesting++；
+- OSIntExit(void) 使 OSIntNesting--；同时，需要查找最高优先级任务，且完成任务切换
+
+![img](./img/2022-12-10_OSInt_1.jpg)
+![img](./img/2022-12-10_OSInt_2.jpg)
+
+- 中断级任务切换函数 OSIntCtxSw()
+  - 在执行中断最后，要进行中断级任务切换，就是确定最高优先级任务，并完成出栈
+  - 任务级任务切换是 OSCtxSW() ; 功能差不多，只是在中断中 断点保护工作已经由中断服务程序完成
+- 应用程序中的临界段：不希望被中断打断的代码段
+  - 使用宏 OS_ENTER_CRITICAL() 和 OS_EXIT_CRITICAL() 封装
+  - 其中终止和恢复代码的命令和硬件相关，移植的时候需要修改
+  - 宏的修改有三种方法：修改参数 OS_CRITICAL_METHOD=1,OS_CRITICAL_METHOD=2,OS_CRITICAL_METHOD=3
+
+### 4.2 uCOSII 的时钟
+
+- 使用硬件定时器产生一个时钟节拍 Time Tick，用来处理延时，超时等，毫秒级
+- 中断服务程序：OSTickISR() 在其中调用 OSTimeTick(void)
+  - OSTimeTick() 时钟节拍服务函数，主要做两件事
+  - 1、计数器 OSTime++；OSTCBDly--；
+  - 2、遍历所有任务控制块，使已经到了延时时限且是非挂起任务进入就绪状态
+
+![img](./img/2022-12-10_Tick_1.jpg)
+![img](./img/2022-12-10_Tick_2.jpg)
 
 
