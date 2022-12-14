@@ -22,6 +22,7 @@
   - [第四章：uC/OS-II 的中断和时钟](#第四章ucos-ii-的中断和时钟)
     - [4.1 uCOSII 的中断](#41-ucosii-的中断)
     - [4.2 uCOSII 的时钟](#42-ucosii-的时钟)
+    - [4.3 时间管理](#43-时间管理)
 
 ## 前言
 
@@ -635,4 +636,28 @@ PAUSE
 ![img](./img/2022-12-10_Tick_1.jpg)
 ![img](./img/2022-12-10_Tick_2.jpg)
 
+- 钩子函数 OSTimeTickHook(void)
+  - 被时钟节拍服务函数 OSTimeTick() 调用，而 OSTimeTick() 被中断服务程序 OSTickISR() 调用
+  - 因此钩子函数的设计就是让用户在时钟节拍中断中处理自己的代码
+  - 钩子函数有 10 个； OSStkInitHook(),OSInitHookBegin()....
 
+![img](./img/2022-12-12_Hook_1.jpg)
+
+### 4.3 时间管理
+
+- 任务的延时
+  - 每个任务都是无限循环，UCOSII 又是抢占式内核；所以，为了避免高优先级任务独占 CPU
+  - UCOSII 要求除休眠任务以外，每个任务都有在适当位置调用 OSTimeDly() 暂停一段时间，让出 CPU 的使用权
+  - OSTimeDlyHMSM(hours, min, sec, milli); 带参数的 OSTimeDly()
+
+![img](./img/2022-12-12_TimeDly_1.jpg)
+
+- 取消任务的延时
+  - INT8U OSTimeDlyResume(INT8U prio)
+  - 就是取消 prio 任务的延时时间
+
+![img](./img/2022-12-13_Delay_Res_1.png)
+
+- 获取和设置系统时间
+  - uCOSII 中有 INT32U 的全局变量 OSTime 来记录时钟节拍数
+  - OSTimeGet() 获取 OSTime 的值；OSTimeSet(INT32U ticks) 设置 OSTime 的值
