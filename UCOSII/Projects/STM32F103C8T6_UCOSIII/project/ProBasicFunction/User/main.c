@@ -23,6 +23,15 @@ OS_TCB Led1TaskTCB;
 // 任务堆栈
 CPU_STK LED1_TASK_STK[LED1_STK_SIZE];
 void led1_task(void *p_arg);
+// 任务优先级
+#define LED2_TASK_PRIO 5
+// 任务堆栈大小
+#define LED2_STK_SIZE 128
+// 任务控制块
+OS_TCB Led2TaskTCB;
+// 任务堆栈
+CPU_STK LED2_TASK_STK[LED1_STK_SIZE];
+void led2_task(void *p_arg);
 
 int main()
 {
@@ -85,6 +94,19 @@ void start_task(void *p_arg)
                  (void *)0,
                  (OS_OPT)OS_OPT_TASK_STK_CHK | OS_OPT_TASK_STK_CLR,
                  (OS_ERR *)&err);
+    OSTaskCreate((OS_TCB *)&Led2TaskTCB,
+                 (CPU_CHAR *)"led2 task",
+                 (OS_TASK_PTR)led2_task,
+                 (void *)0,
+                 (OS_PRIO)LED2_TASK_PRIO,
+                 (CPU_STK *)&LED2_TASK_STK[0],
+                 (CPU_STK_SIZE)LED2_STK_SIZE / 10,
+                 (CPU_STK_SIZE)LED2_STK_SIZE,
+                 (OS_MSG_QTY)0,
+                 (OS_TICK)0,
+                 (void *)0,
+                 (OS_OPT)OS_OPT_TASK_STK_CHK | OS_OPT_TASK_STK_CLR,
+                 (OS_ERR *)&err);
     OS_TaskSuspend((OS_TCB *)&StartTaskTCB, &err); // 挂起开始任务
     OS_CRITICAL_EXIT();                            // 进入临界区
 }
@@ -97,5 +119,16 @@ void led1_task(void *p_arg)
     {
         LED_BIT_GPIOC_PIN13 = !LED_BIT_GPIOC_PIN13;
         OSTimeDlyHMSM(0, 0, 0, 100, OS_OPT_TIME_HMSM_STRICT, &err); // 延时 200ms
+    }
+}
+// led2 任务函数
+void led2_task(void *p_arg)
+{
+    OS_ERR err;
+    p_arg = p_arg;
+    while (1)
+    {
+        LED_BIT_GPIOC_PIN14 = !LED_BIT_GPIOC_PIN14;
+        OSTimeDlyHMSM(0, 0, 0, 200, OS_OPT_TIME_HMSM_STRICT, &err); // 延时 200ms
     }
 }
