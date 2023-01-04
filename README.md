@@ -43,7 +43,7 @@
   - UcosIIBook_3_6；对应任哲书中的 3-6 程序代码；程序在 WIN10 不能使用，因为书中是 XP 系统的编译环境
   - STM32F103C8T6_UCOSIII；移植 UCOSIII 到 STM32F103C8T6 当中
     - project：工程文件
-      - ProBasicFunction: 基础工程，库函数点亮 LED
+      - ProBasicFunction: 按照普中学习文档，成功移植 UCOSIII 到 STM32F103C8T6
 
 ## STM32 寻找资源
 
