@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F10X_MD</Define>
               <Undefine></Undefine>
-              <IncludePath>.\User;.\Libraries\CMSIS;.\App;.\Libraries\STM32F10x_StdPeriph_Driver\inc;.\Public</IncludePath>
+              <IncludePath>.\User;.\Libraries\CMSIS;.\App;.\Libraries\STM32F10x_StdPeriph_Driver\inc;.\Public;.\UCOSIII\uC_CPU;.\UCOSIII\uCOSIII_Source;.\UCOSIII\uCOSIII_Ports;.\UCOSIII\uC_LIB;.\UCOSIII\uC_CONFIG</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -496,6 +496,40 @@
               <FileName>SysTick.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Public\SysTick.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>uCOSIII_Source</GroupName>
+        </Group>
+        <Group>
+          <GroupName>uCOSIII_Ports</GroupName>
+        </Group>
+        <Group>
+          <GroupName>uC_LIB</GroupName>
+        </Group>
+        <Group>
+          <GroupName>uC_CPU</GroupName>
+          <Files>
+            <File>
+              <FileName>cpu.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\UCOSIII\uC_CPU\cpu.h</FilePath>
+            </File>
+            <File>
+              <FileName>cpu_def.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\UCOSIII\uC_CPU\cpu_def.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>uC_CONFIG</GroupName>
+          <Files>
+            <File>
+              <FileName>cpu_cfg.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\UCOSIII\uC_CONFIG\cpu_cfg.h</FilePath>
             </File>
           </Files>
         </Group>

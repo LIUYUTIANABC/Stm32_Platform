@@ -9,3 +9,10 @@
       - .\Obj\ProBasicFunction.axf: Error: L6406E: No space in execution regions with .ANY selector matching lib_mem.o(.bss).
     - 上面文档中用的 F103ZE 空间比 F03C8 大很多；所以移植到中容量的芯片中，空间不够，需要修改 memory 空间大小
     - 参考网址：https://blog.csdn.net/d89538239/article/details/109811582
+
+## project\ProMySimpleUCOSIII
+
+按照野火文档，从 0 到 1 写一个简单版的 UCOS；目的是学习内核
+
+- 参考文档：https://doc.embedfire.com/rtos/ucos/i.mx_rt1052/zh/latest/zero_to_one/foreword.html
+- 参考视频：https://www.bilibili.com/video/av62027241/
