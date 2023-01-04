@@ -29,9 +29,11 @@
   - 记录待开发的工程列表
 - 时间嵌入式触发系统
 
-## UCOSII
+## UCOS
 
-- Documents：UCOSII 学习笔记；任哲版本
+- Documents：
+  - UCOSII 学习笔记；任哲版本
+  - UCOSIII 学习笔记；野火版本
 - Projects
   - GCC_Demo；熟悉 GCC 编译 C 语言代码；因为任哲书中使用 Borland，已经被淘汰，使用 GCC；
     - Demo_HelloWorld; 基本使用
@@ -44,6 +46,7 @@
   - STM32F103C8T6_UCOSIII；移植 UCOSIII 到 STM32F103C8T6 当中
     - project：工程文件
       - ProBasicFunction: 按照普中学习文档，成功移植 UCOSIII 到 STM32F103C8T6
+      - ProMySimpleUCOSIII: 按照野火文档，从 0 到 1 写一个简单版的 UCOS；目的是学习内核
 
 ## STM32 寻找资源
 
