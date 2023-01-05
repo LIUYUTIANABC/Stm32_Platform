@@ -2,12 +2,16 @@
 #include "SysTick.h"
 #include "led.h"
 #include "cpu.h"
+#include "os.h"
 
 #define  TASK1_STK_SIZE       128
 #define  TASK2_STK_SIZE       128
 
 static   CPU_STK   Task1Stk[TASK1_STK_SIZE];
 static   CPU_STK   Task2Stk[TASK2_STK_SIZE];
+
+static   OS_TCB    Task1TCB;
+static   OS_TCB    Task2TCB;
 
 uint32_t flag1;
 uint32_t flag2;
