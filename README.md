@@ -17,6 +17,13 @@
 - Programming： 使用串口下载程序, ST-Link, 普中仿真器, SWD 的使用方法
 - Project： 使用 STM32F103 开发的工程项目
   - ProBasicFunction： 学会使用 STM32F103C8T6，参考 “STM32F103C8T6_Feature.md” 实现基本功能
+  - ProTimeTriggerSourceCode： "时间触发嵌入式系统设计模式" 书籍的光盘 CD 内的源码；
+  - ProTimeTriggerSystem_Sch： 结合 "时间触发嵌入式系统设计模式" 书籍，学习基于时间的触发嵌入式系统
+  - ProTimeTriggerSystem_Hybrid_Sch： 混合式调度器：综合抢占式调度器和合作式调度器的特性，且是受控的
+  - ProTimeTriggerSystem_Sch_USART-RS232： 使用合作式调度器，实现 USART1 和 PC 通过串口助手通信；
+  - ProTimeTriggerSystem_Sch_Key： 对应 时间触发嵌入式系统 的 Chapter 19；按键扫描
+  - ProTimeTriggerSystem_Sch_Key_RS232： 对应 时间触发嵌入式系统 的 Chapter 20；按键和串口发送
+  - ProTimeTriggerSystem_Sch_LED_Scan： 对应 时间触发嵌入式系统 的 Chapter 21; 数码管扫描
 
 ## STM32F407
 
