@@ -6,7 +6,6 @@
 #include "system.h"
 #include "SysTick.h"
 #include "led.h"
-#include "cpu.h"
 #include "os.h"
 
 /*

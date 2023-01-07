@@ -30,7 +30,7 @@
     ; IMPORT  OSRunning                                           ; External references
     ; IMPORT  OSPrioCur
     ; IMPORT  OSPrioHighRdy
-    IMPORT  OSTCBCurPtr
+    IMPORT  OSTCBCurPtr             ; 外部文件引人的参考(1)
     IMPORT  OSTCBHighRdyPtr
     ; IMPORT  OSIntExit
     ; IMPORT  OSTaskSwHook
@@ -38,7 +38,7 @@
 
 
     EXPORT  OSStartHighRdy                                      ; Functions declared in this file
-    EXPORT  OS_CPU_PendSVHandler
+    EXPORT  OS_CPU_PendSVHandler    ; 该文件定义的函数(2)
 
 ;PAGE
 ;********************************************************************************************************
