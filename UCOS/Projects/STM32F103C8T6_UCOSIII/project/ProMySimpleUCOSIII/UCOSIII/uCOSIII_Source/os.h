@@ -13,7 +13,7 @@
 // #include <cpu_core.h>
 // #include <lib_def.h>
 #include <os_type.h>
-// #include <os_cpu.h>
+#include <os_cpu.h>
 
 
 

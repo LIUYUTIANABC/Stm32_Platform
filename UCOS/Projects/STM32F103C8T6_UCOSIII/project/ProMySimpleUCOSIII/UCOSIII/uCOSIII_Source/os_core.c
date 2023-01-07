@@ -52,7 +52,7 @@ void  OSInit (OS_ERR  *p_err)
 /* 任务切换，实际就是触发PendSV异常，然后在PendSV异常中进行上下文切换 */
 void  OSSched (void)
 {
-     if ( OSTCBCurPtr == OSRdyList[0].HeadPtr )
+    if ( OSTCBCurPtr == OSRdyList[0].HeadPtr )
     {
         OSTCBHighRdyPtr = OSRdyList[1].HeadPtr;
     }
