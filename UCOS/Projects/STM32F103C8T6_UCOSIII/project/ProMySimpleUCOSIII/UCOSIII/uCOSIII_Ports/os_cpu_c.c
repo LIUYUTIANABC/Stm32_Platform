@@ -6,6 +6,10 @@
 */
 
 #include  <os.h>
+#include "core_cm3.h"
+#include "stm32f10x.h"
+
+extern uint32_t SystemCoreClock;
 
 /*$PAGE*/
 /*
@@ -86,3 +90,76 @@ CPU_STK  *OSTaskStkInit (OS_TASK_PTR    p_task,
 
     return (p_stk);
 }
+
+/*$PAGE*/
+/*
+*********************************************************************************************************
+*                                          SYS TICK HANDLER
+*
+* Description: Handle the system tick (SysTick) interrupt, which is used to generate the uC/OS-II tick
+*              interrupt.
+*
+* Arguments  : None.
+*
+* Note(s)    : 1) This function MUST be placed on entry 15 of the Cortex-M3 vector table.
+*********************************************************************************************************
+*/
+
+void  OS_CPU_SysTickHandler (void)
+{
+    OSTimeTick();                                           /* Call uC/OS-III's OSTimeTick()                          */
+}
+
+
+/*$PAGE*/
+/*
+*********************************************************************************************************
+*                                         INITIALIZE SYS TICK
+*
+* Description: Initialize the SysTick.
+*
+* Arguments  : cnts         Number of SysTick counts between two OS tick interrupts.
+*
+* Note(s)    : 1) This function MUST be called after OSStart() & after processor initialization.
+*********************************************************************************************************
+*/
+#if 0/* 不用μC/OS-III自带的 */
+void  OS_CPU_SysTickInit (CPU_INT32U  cnts)
+{
+    CPU_INT32U  prio;
+
+    /* 填写 SysTick 的重载计数值 */
+    CPU_REG_NVIC_ST_RELOAD = cnts - 1u;
+
+    /* 设置 SysTick 中断优先级 */
+    prio  = CPU_REG_NVIC_SHPRI3;
+    prio &= DEF_BIT_FIELD(24, 0);
+    prio |= DEF_BIT_MASK(OS_CPU_CFG_SYSTICK_PRIO, 24);
+
+    CPU_REG_NVIC_SHPRI3 = prio;
+
+    /* 启用 SysTick 的时钟源和启动计数器 */
+    CPU_REG_NVIC_ST_CTRL |= CPU_REG_NVIC_ST_CTRL_CLKSOURCE |
+                            CPU_REG_NVIC_ST_CTRL_ENABLE;
+    /* 启用 SysTick 的定时中断 */
+    CPU_REG_NVIC_ST_CTRL |= CPU_REG_NVIC_ST_CTRL_TICKINT;
+}
+
+#else/* 直接使用头文件ARMCM3.h里面现有的寄存器定义和函数来实现 */
+void  OS_CPU_SysTickInit (CPU_INT32U  ms)
+{
+    /* 设置重装载寄存器的值 */
+    SysTick->LOAD  = ms * SystemCoreClock / 1000 - 1;
+
+    /* 配置中断优先级为最低 */
+    NVIC_SetPriority (SysTick_IRQn, (1<<__NVIC_PRIO_BITS) - 1);
+
+    /* 复位当前计数器的值 */
+    SysTick->VAL   = 0;
+
+    /* 选择时钟源、启用中断、启用计数器 */
+    SysTick->CTRL  = SysTick_CTRL_CLKSOURCE_Msk |
+                    SysTick_CTRL_TICKINT_Msk   |
+                    SysTick_CTRL_ENABLE_Msk;
+}
+#endif

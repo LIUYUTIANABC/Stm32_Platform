@@ -85,4 +85,15 @@ typedef  CPU_INT32U  CPU_ADDR;
 typedef  CPU_INT32U             CPU_STK;                        /* Defines CPU stack word size (in octets).             */
 typedef  CPU_ADDR               CPU_STK_SIZE;                   /* Defines CPU stack      size (in number of CPU_STKs). */
 
+
+/*$PAGE*/
+/*
+*********************************************************************************************************
+*                                         FUNCTION PROTOTYPES
+*********************************************************************************************************
+*/
+
+void        CPU_IntDis       (void);
+void        CPU_IntEn        (void);
+
 #endif/* CPU_H */
