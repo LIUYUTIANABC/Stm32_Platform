@@ -118,7 +118,7 @@ NVIC_PENDSVSET  EQU     0x10000000    ; 触发PendSV异常的值 Bit28：PENDSVS
 ; 3、触发PendSV异常，开始上下文切换
 ;*******************************************************************
 OSStartHighRdy
-    LDR   R0, = NVIC_SYSPRI14    ; 设置  PendSV 异常优先级为最低
+    LDR     R0, = NVIC_SYSPRI14    ; 设置  PendSV 异常优先级为最低
     LDR     R1, = NVIC_PENDSV_PRI
     STRB    R1, [R0]
 
@@ -267,4 +267,5 @@ OS_CPU_PendSVHandler_nosave
     ; 在STM32中，栈是由高地址向低地址生长的。
     BX      LR
 
+    NOP
     END

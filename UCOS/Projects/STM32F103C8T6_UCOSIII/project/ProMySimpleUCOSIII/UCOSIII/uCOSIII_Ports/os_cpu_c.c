@@ -6,7 +6,6 @@
 */
 
 #include  <os.h>
-#include "core_cm3.h"
 #include "stm32f10x.h"
 
 extern uint32_t SystemCoreClock;

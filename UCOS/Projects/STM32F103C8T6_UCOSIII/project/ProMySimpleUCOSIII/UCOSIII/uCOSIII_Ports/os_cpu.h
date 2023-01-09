@@ -123,8 +123,6 @@
 *********************************************************************************************************
 */
 
-OS_CPU_EXT  CPU_STK  *OS_CPU_ExceptStkBase;
-
 /*
 *********************************************************************************************************
 *                                         FUNCTION PROTOTYPES
@@ -135,7 +133,7 @@ void  OSStartHighRdy       (void); /* 在os_cpu_a.s中实现 */
 void  OS_CPU_PendSVHandler (void); /* 在os_cpu_a.s中实现 */
 
 
-// void  OS_CPU_SysTickHandler(void);
-// void  OS_CPU_SysTickInit   (CPU_INT32U  cnts);
+void  OS_CPU_SysTickHandler(void);  /* 在os_cpu_c.c中实现 */
+void  OS_CPU_SysTickInit   (CPU_INT32U  cnts);  /* 在os_cpu_c.c中实现 */
 
 #endif

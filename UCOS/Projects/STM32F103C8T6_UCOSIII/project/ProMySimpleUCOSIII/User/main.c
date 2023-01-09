@@ -63,6 +63,14 @@ int main(void)
 {
     OS_ERR err;
 
+    LedInit();
+
+    /* 关闭中断 */
+    CPU_IntDis();
+
+    /* 配置SysTick 10ms 中断一次 */
+    OS_CPU_SysTickInit (10);
+
     /* 初始化相关的全局变量 */
     OSInit(&err);
 
@@ -104,13 +112,10 @@ void delay (uint32_t count)
 void Task1( void *p_arg )
 {
     for ( ;; ) {
-        flag1 = 1;
+        LED_BIT_GPIOC_PIN13 = 1;
         delay( 100 );
-        flag1 = 0;
+        LED_BIT_GPIOC_PIN13 = 0;
         delay( 100 );
-
-        /* 任务切换，这里是手动切换 */
-        OSSched();
     }
 }
 
@@ -118,12 +123,9 @@ void Task1( void *p_arg )
 void Task2( void *p_arg )
 {
     for ( ;; ) {
-        flag2 = 1;
+        LED_BIT_GPIOC_PIN14 = 1;
         delay( 100 );
-        flag2 = 0;
+        LED_BIT_GPIOC_PIN14 = 0;
         delay( 100 );
-
-        /* 任务切换，这里是手动切换 */
-        OSSched();
     }
 }

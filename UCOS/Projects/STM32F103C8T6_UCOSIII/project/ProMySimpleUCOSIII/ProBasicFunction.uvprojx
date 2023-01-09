@@ -508,6 +508,26 @@
               <FilePath>.\UCOSIII\uCOSIII_Source\os.h</FilePath>
             </File>
             <File>
+              <FileName>os_var.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\UCOSIII\uCOSIII_Source\os_var.c</FilePath>
+            </File>
+            <File>
+              <FileName>os_time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\UCOSIII\uCOSIII_Source\os_time.c</FilePath>
+            </File>
+            <File>
+              <FileName>os_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\UCOSIII\uCOSIII_Source\os_task.c</FilePath>
+            </File>
+            <File>
+              <FileName>os_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\UCOSIII\uCOSIII_Source\os_core.c</FilePath>
+            </File>
+            <File>
               <FileName>os_type.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\UCOSIII\uCOSIII_Source\os_type.h</FilePath>
@@ -536,43 +556,6 @@
         </Group>
         <Group>
           <GroupName>uC_LIB</GroupName>
-          <Files>
-            <File>
-              <FileName>lib_def.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\UCOSIII\uC_LIB\lib_def.h</FilePath>
-            </File>
-            <File>
-              <FileName>lib_str.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\UCOSIII\uC_LIB\lib_str.c</FilePath>
-            </File>
-            <File>
-              <FileName>lib_mem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\UCOSIII\uC_LIB\lib_mem.c</FilePath>
-            </File>
-            <File>
-              <FileName>lib_str.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\UCOSIII\uC_LIB\lib_str.h</FilePath>
-            </File>
-            <File>
-              <FileName>lib_mem.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\UCOSIII\uC_LIB\lib_mem.h</FilePath>
-            </File>
-            <File>
-              <FileName>lib_ascii.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\UCOSIII\uC_LIB\lib_ascii.h</FilePath>
-            </File>
-            <File>
-              <FileName>lib_ascii.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\UCOSIII\uC_LIB\lib_ascii.c</FilePath>
-            </File>
-          </Files>
         </Group>
         <Group>
           <GroupName>uC_CPU</GroupName>
@@ -583,29 +566,9 @@
               <FilePath>.\UCOSIII\uC_CPU\cpu.h</FilePath>
             </File>
             <File>
-              <FileName>cpu_def.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\UCOSIII\uC_CPU\cpu_def.h</FilePath>
-            </File>
-            <File>
-              <FileName>cpu_core.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\UCOSIII\uC_CPU\cpu_core.c</FilePath>
-            </File>
-            <File>
-              <FileName>cpu_core.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\UCOSIII\uC_CPU\cpu_core.h</FilePath>
-            </File>
-            <File>
               <FileName>cpu_a.asm</FileName>
               <FileType>2</FileType>
               <FilePath>.\UCOSIII\uC_CPU\cpu_a.asm</FilePath>
-            </File>
-            <File>
-              <FileName>cpu_c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\UCOSIII\uC_CPU\cpu_c.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -613,19 +576,9 @@
           <GroupName>uC_CONFIG</GroupName>
           <Files>
             <File>
-              <FileName>cpu_cfg.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\UCOSIII\uC_CONFIG\cpu_cfg.h</FilePath>
-            </File>
-            <File>
               <FileName>os_cfg.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\UCOSIII\uC_CONFIG\os_cfg.h</FilePath>
-            </File>
-            <File>
-              <FileName>lib_cfg.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\UCOSIII\uC_CONFIG\lib_cfg.h</FilePath>
             </File>
           </Files>
         </Group>
