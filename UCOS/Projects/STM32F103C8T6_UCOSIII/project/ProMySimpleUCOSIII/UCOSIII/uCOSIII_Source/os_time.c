@@ -38,6 +38,56 @@ const  CPU_CHAR  *os_time__c = "$Id: $";
 #endif
 
 
+/*
+************************************************************************************************************************
+*                                                  DELAY TASK 'n' TICKS
+*
+* Description: This function is called to delay execution of the currently running task until the specified number of
+*              system ticks expires.  This, of course, directly equates to delaying the current task for some time to
+*              expire.  No delay will result if the specified delay is 0.  If the specified delay is greater than 0
+*              then, a context switch will result.
+*
+* Arguments  : dly       is a value in 'clock ticks' that the task will either delay for or, the target match value
+*                        of the tick counter (OSTickCtr).  Note that specifying 0 means the task is not to delay.
+*
+*                        depending on the option argument, the task will wake up when OSTickCtr reaches:
+*
+*                            OS_OPT_TIME_DLY      : OSTickCtr + dly
+*                            OS_OPT_TIME_TIMEOUT  : OSTickCtr + dly
+*                            OS_OPT_TIME_MATCH    : dly
+*                            OS_OPT_TIME_PERIODIC : OSTCBCurPtr->TickCtrPrev + dly
+*
+*              opt       specifies whether 'dly' represents absolute or relative time; default option marked with *** :
+*
+*                        *** OS_OPT_TIME_DLY        specifies a relative time from the current value of OSTickCtr.
+*                            OS_OPT_TIME_TIMEOUT    same as OS_OPT_TIME_DLY.
+*                            OS_OPT_TIME_MATCH      indicates that 'dly' specifies the absolute value that OSTickCtr
+*                                                   must reach before the task will be resumed.
+*                            OS_OPT_TIME_PERIODIC   indicates that 'dly' specifies the periodic value that OSTickCtr
+*                                                   must reach before the task will be resumed.
+*
+*              p_err     is a pointer to a variable that will contain an error code from this call.
+*
+*                            OS_ERR_NONE            the call was successful and the delay occurred.
+*                            OS_ERR_OPT_INVALID     if you specified an invalid option for this function.
+*                            OS_ERR_SCHED_LOCKED    can't delay when the scheduler is locked.
+*                            OS_ERR_TIME_DLY_ISR    if you called this function from an ISR.
+*                            OS_ERR_TIME_ZERO_DLY   if you specified a delay of zero.
+*
+* Returns    : none
+************************************************************************************************************************
+*/
+
+void  OSTimeDly (OS_TICK   dly)
+{
+    /* 设置延时时间 */
+    OSTCBCurPtr->TaskDelayTicks = dly;
+    /* 进行任务调度 */
+    OSSched();                                              /* Find next task to run!                                 */
+}
+
+
+
 /*$PAGE*/
 /*
 ************************************************************************************************************************

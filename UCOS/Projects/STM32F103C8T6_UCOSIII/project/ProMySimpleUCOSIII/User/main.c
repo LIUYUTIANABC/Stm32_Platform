@@ -113,9 +113,9 @@ void Task1( void *p_arg )
 {
     for ( ;; ) {
         LED_BIT_GPIOC_PIN13 = 1;
-        delay( 100 );
+        OSTimeDly(2);
         LED_BIT_GPIOC_PIN13 = 0;
-        delay( 100 );
+        OSTimeDly(2);
     }
 }
 
@@ -124,8 +124,8 @@ void Task2( void *p_arg )
 {
     for ( ;; ) {
         LED_BIT_GPIOC_PIN14 = 1;
-        delay( 100 );
+        OSTimeDly(2);
         LED_BIT_GPIOC_PIN14 = 0;
-        delay( 100 );
+        OSTimeDly(2);
     }
 }

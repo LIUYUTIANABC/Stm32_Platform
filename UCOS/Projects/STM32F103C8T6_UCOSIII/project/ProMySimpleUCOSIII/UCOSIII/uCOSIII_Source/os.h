@@ -309,6 +309,8 @@ struct  os_rdy_list {
 struct os_tcb {
     CPU_STK             *StkPtr;                            /* Pointer to current top of stack                        */
     CPU_STK_SIZE         StkSize;                           /* Size of task stack (in number of stack elements)       */
+    /* 任务延时周期个数 */
+    OS_TICK             TaskDelayTicks;
 };
 
 
@@ -320,6 +322,11 @@ struct os_tcb {
 ************************************************************************************************************************
 ************************************************************************************************************************
 */
+                                                                        /* IDLE TASK -------------------------------- */
+/* 空闲任务计数变量 */
+OS_EXT            OS_IDLE_CTR               OSIdleTaskCtr;
+/* 空闲任务TCB */
+OS_EXT            OS_TCB                    OSIdleTaskTCB;
 
 OS_EXT            OS_STATE                  OSRunning;                  /* Flag indicating that kernel is running     */
 
@@ -330,6 +337,17 @@ OS_EXT            OS_RDY_LIST               OSRdyList[OS_CFG_PRIO_MAX]; /* Table
 OS_EXT            OS_TCB                   *OSTCBCurPtr;                /* Pointer to currently running TCB           */
 OS_EXT            OS_TCB                   *OSTCBHighRdyPtr;            /* Pointer to highest priority  TCB           */
 
+/*$PAGE*/
+/*
+************************************************************************************************************************
+************************************************************************************************************************
+*                                                   E X T E R N A L S
+************************************************************************************************************************
+************************************************************************************************************************
+*/
+
+extern  CPU_STK     * const OSCfg_IdleTaskStkBasePtr;
+extern  CPU_STK_SIZE  const OSCfg_IdleTaskStkSize;
 
 /*
 ************************************************************************************************************************
@@ -368,6 +386,13 @@ void          OSInit                    (OS_ERR                *p_err);
 void          OSSched                   (void);
 
 void          OSStart                   (OS_ERR  *p_err);
+
+/* ------------------------------------------------ INTERNAL FUNCTIONS ---------------------------------------------- */
+
+void          OS_IdleTask               (void                  *p_arg);
+
+void          OS_IdleTaskInit           (OS_ERR                *p_err);
+
 
 /*$PAGE*/
 /*
