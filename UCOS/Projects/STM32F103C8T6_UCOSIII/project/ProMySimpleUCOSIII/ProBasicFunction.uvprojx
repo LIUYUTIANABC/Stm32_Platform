@@ -532,6 +532,11 @@
               <FileType>5</FileType>
               <FilePath>.\UCOSIII\uCOSIII_Source\os_type.h</FilePath>
             </File>
+            <File>
+              <FileName>os_cfg_app.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\UCOSIII\uCOSIII_Source\os_cfg_app.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -579,6 +584,11 @@
               <FileName>os_cfg.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\UCOSIII\uC_CONFIG\os_cfg.h</FilePath>
+            </File>
+            <File>
+              <FileName>os_cfg_app.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\UCOSIII\uC_CONFIG\os_cfg_app.h</FilePath>
             </File>
           </Files>
         </Group>

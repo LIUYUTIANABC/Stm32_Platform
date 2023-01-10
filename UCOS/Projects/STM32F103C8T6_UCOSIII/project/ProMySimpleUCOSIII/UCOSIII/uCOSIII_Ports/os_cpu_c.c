@@ -106,6 +106,18 @@ CPU_STK  *OSTaskStkInit (OS_TASK_PTR    p_task,
 
 void  OS_CPU_SysTickHandler (void)
 {
+    OS_PRIO       i;
+    OS_RDY_LIST  *p_rdy_list;
+
+    for ( i = 0; i < 2; i++)
+    {
+        p_rdy_list = &OSRdyList[i];
+        if (p_rdy_list->HeadPtr->TaskDelayTicks != 0)
+        {
+            p_rdy_list->HeadPtr->TaskDelayTicks--;
+        }
+    }
+
     OSTimeTick();                                           /* Call uC/OS-III's OSTimeTick()                          */
 }
 

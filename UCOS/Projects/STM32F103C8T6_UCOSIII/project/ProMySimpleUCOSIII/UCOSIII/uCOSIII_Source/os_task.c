@@ -106,6 +106,7 @@ void  OSTaskCreate (OS_TCB        *p_tcb,
                                                             /* -------------- INITIALIZE THE TCB FIELDS ------------- */
     p_tcb->StkPtr        = p_sp;                            /* Save the new top-of-stack pointer                      */
     p_tcb->StkSize       = stk_size;                        /* Save the stack size (in number of CPU_STK elements)    */
+    p_tcb->TaskDelayTicks = 0;
 
    *p_err = OS_ERR_NONE;
 
