@@ -376,6 +376,8 @@ void  OSTaskCreate (OS_TCB        *p_tcb,
 
 void          OSTimeTick                (void);
 
+void          OSTimeDly                 (OS_TICK                dly);
+
 /*$PAGE*/
 /* ================================================================================================================== */
 /*                                                    MISCELLANEOUS                                                   */
