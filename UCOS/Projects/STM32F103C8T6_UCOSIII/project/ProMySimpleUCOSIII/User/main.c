@@ -23,6 +23,11 @@
 uint32_t flag1;
 uint32_t flag2;
 
+/* 定义三个全局变量 */
+uint32_t TimeStart;
+uint32_t TimeEnd;
+uint32_t TimeUse;
+
 /*
 *******************************************************************
 *                        TCB & STACK &任务声明
@@ -113,7 +118,10 @@ void Task1( void *p_arg )
 {
     for ( ;; ) {
         LED_BIT_GPIOC_PIN13 = 1;
-        OSTimeDly(2);
+        TimeStart = OS_TS_GET();
+        OSTimeDly(20);
+        TimeEnd = OS_TS_GET();
+        TimeUse = TimeEnd - TimeStart;
         LED_BIT_GPIOC_PIN13 = 0;
         OSTimeDly(2);
     }
