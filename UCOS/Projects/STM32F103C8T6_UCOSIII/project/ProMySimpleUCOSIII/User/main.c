@@ -70,6 +70,9 @@ int main(void)
 
     LedInit();
 
+     /* CPU初始化：1、初始化时间戳 */
+    CPU_Init();
+
     /* 关闭中断 */
     CPU_IntDis();
 
@@ -119,7 +122,7 @@ void Task1( void *p_arg )
     for ( ;; ) {
         LED_BIT_GPIOC_PIN13 = 1;
         TimeStart = OS_TS_GET();
-        OSTimeDly(20);
+        OSTimeDly(2);
         TimeEnd = OS_TS_GET();
         TimeUse = TimeEnd - TimeStart;
         LED_BIT_GPIOC_PIN13 = 0;

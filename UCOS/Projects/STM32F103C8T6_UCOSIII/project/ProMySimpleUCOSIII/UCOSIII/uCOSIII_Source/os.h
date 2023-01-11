@@ -10,7 +10,7 @@
 
 #include <os_cfg.h>
 #include <cpu.h>
-// #include <cpu_core.h>
+#include <cpu_core.h>
 // #include <lib_def.h>
 #include <os_type.h>
 #include <os_cpu.h>

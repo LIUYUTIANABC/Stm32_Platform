@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F10X_MD</Define>
               <Undefine></Undefine>
-              <IncludePath>.\User;.\Libraries\CMSIS;.\App;.\Libraries\STM32F10x_StdPeriph_Driver\inc;.\Public;.\UCOSIII\uC_CPU;.\UCOSIII\uCOSIII_Source;.\UCOSIII\uCOSIII_Ports;.\UCOSIII\uC_LIB;.\UCOSIII\uC_CONFIG</IncludePath>
+              <IncludePath>.\User;.\Libraries\CMSIS;.\App;.\Libraries\STM32F10x_StdPeriph_Driver\inc;.\Public;.\UCOSIII\uC_CPU;.\UCOSIII\uCOSIII_Source;.\UCOSIII\uCOSIII_Ports;.\UCOSIII\uC_LIB;.\UCOSIII\uC_CONFIG;.\UCOSIII\uC_BSP</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -575,6 +575,16 @@
               <FileType>2</FileType>
               <FilePath>.\UCOSIII\uC_CPU\cpu_a.asm</FilePath>
             </File>
+            <File>
+              <FileName>cpu_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\UCOSIII\uC_CPU\cpu_core.c</FilePath>
+            </File>
+            <File>
+              <FileName>cpu_core.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\UCOSIII\uC_CPU\cpu_core.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -589,6 +599,26 @@
               <FileName>os_cfg_app.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\UCOSIII\uC_CONFIG\os_cfg_app.h</FilePath>
+            </File>
+            <File>
+              <FileName>cpu_cfg.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\UCOSIII\uC_CONFIG\cpu_cfg.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>uC_BSP</GroupName>
+          <Files>
+            <File>
+              <FileName>bsp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\UCOSIII\uC_BSP\bsp.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\UCOSIII\uC_BSP\bsp.h</FilePath>
             </File>
           </Files>
         </Group>
