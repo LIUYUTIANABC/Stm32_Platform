@@ -26,6 +26,7 @@
         "PWM_515C.C": "cpp",
         "Speech.C": "cpp",
         "PC.C": "cpp",
-        "OS_CPU_C.C": "cpp"
+        "OS_CPU_C.C": "cpp",
+        "cpu.h": "c"
     }
 }

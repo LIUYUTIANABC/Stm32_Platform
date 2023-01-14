@@ -20,6 +20,7 @@
 */
 
 #include  <cpu.h>
+#include  <cpu_cfg.h>
 
 /*
 *********************************************************************************************************
@@ -109,6 +110,11 @@
 *               by 'CPU_CFG_TS_TMR_SIZE' (see 'cpu_cfg.h  CPU TIMESTAMP CONFIGURATION  Note #2').
 *********************************************************************************************************
 */
+typedef  CPU_INT32U  CPU_TS32;
+typedef  CPU_INT64U  CPU_TS64;
+
+typedef  CPU_TS32    CPU_TS;                                    /* Req'd for backwards-compatibility.                   */
+
 #if     (CPU_CFG_TS_TMR_EN   == DEF_ENABLED)                    /* CPU ts tmr defined to cfg'd word size (see Note #1). */
 typedef  CPU_INT32U  CPU_TS_TMR;
 #endif
@@ -138,9 +144,10 @@ CPU_CORE_EXT  CPU_TS_TMR_FREQ  CPU_TS_TmrFreq_Hz;               /* CPU ts tmr fr
 *                                      DEFINED IN PRODUCT'S BSP
 *********************************************************************************************************
 */
+void             CPU_Init                 (void);
+
 #if (CPU_CFG_TS_TMR_EN == DEF_ENABLED)
 void  CPU_TS_TmrInit(void);
-CPU_INT32U  BSP_CPU_ClkFreq (void);
 void  CPU_TS_TmrFreqSet (CPU_TS_TMR_FREQ  freq_hz);
 CPU_TS_TMR  CPU_TS_TmrRd (void);
 #endif
