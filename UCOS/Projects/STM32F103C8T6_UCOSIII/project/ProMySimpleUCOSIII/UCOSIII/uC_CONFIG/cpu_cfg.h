@@ -81,5 +81,35 @@
 #define  CPU_CFG_TS_TMR_SIZE                    CPU_WORD_SIZE_32
 
 
+/*
+*********************************************************************************************************
+*                        CPU INTERRUPTS DISABLED TIME MEASUREMENT CONFIGURATION
+*
+* Note(s) : (1) (a) Configure CPU_CFG_INT_DIS_MEAS_EN to enable/disable measuring CPU's interrupts
+*                   disabled time :
+*
+*                   (a)  Enabled,       if CPU_CFG_INT_DIS_MEAS_EN      #define'd in 'cpu_cfg.h'
+*
+*                   (b) Disabled,       if CPU_CFG_INT_DIS_MEAS_EN  NOT #define'd in 'cpu_cfg.h'
+*
+*                   See also 'cpu_core.h  FUNCTION PROTOTYPES  Note #1'
+*                          & 'cpu_core.h  CPU INCLUDE FILES    Note #3'.
+*
+*               (b) Configure CPU_CFG_INT_DIS_MEAS_OVRHD_NBR with the number of times to measure &
+*                   average the interrupts disabled time measurements overhead.
+*
+*                   Recommend a single (1) overhead time measurement, even for instruction-cache-enabled
+*                   CPUs, since critical sections are NOT typically called within instruction-cached loops.
+*                   Thus, a single non-cached/non-averaged time measurement is a more realistic overhead
+*                   for the majority of non-cached interrupts disabled time measurements.
+*
+*                   See also 'cpu_core.c  CPU_IntDisMeasInit()  Note #3a'.
+*********************************************************************************************************
+*/
+
+#if 1                                                           /* Configure CPU interrupts disabled time ...           */
+#define  CPU_CFG_INT_DIS_MEAS_EN                                /* ... measurements feature (see Note #1a).             */
+#endif
+
 #endif                                                          /* End of CPU cfg module include.                       */
 
