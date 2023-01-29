@@ -111,5 +111,9 @@
 #define  CPU_CFG_INT_DIS_MEAS_EN                                /* ... measurements feature (see Note #1a).             */
 #endif
 
+                                                                /* Configure number of interrupts disabled overhead ... */
+#define  CPU_CFG_INT_DIS_MEAS_OVRHD_NBR                    1u   /* ... time measurements (see Note #1b).                */
+
+
 #endif                                                          /* End of CPU cfg module include.                       */
 

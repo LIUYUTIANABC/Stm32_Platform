@@ -1,6 +1,42 @@
 #ifndef CPU_H
 #define CPU_H
 
+/*
+*********************************************************************************************************
+*                                          CPU INCLUDE FILES
+*
+* Note(s) : (1) The following CPU files are located in the following directories :
+*
+*               (a) \<Your Product Application>\cpu_cfg.h
+*
+*               (b) (1) \<CPU-Compiler Directory>\cpu_def.h
+*                   (2) \<CPU-Compiler Directory>\<cpu>\<compiler>\cpu*.*
+*
+*                       where
+*                               <Your Product Application>      directory path for Your Product's Application
+*                               <CPU-Compiler Directory>        directory path for common   CPU-compiler software
+*                               <cpu>                           directory name for specific CPU
+*                               <compiler>                      directory name for specific compiler
+*
+*           (2) Compiler MUST be configured to include as additional include path directories :
+*
+*               (a) '\<Your Product Application>\' directory                            See Note #1a
+*
+*               (b) (1) '\<CPU-Compiler Directory>\'                  directory         See Note #1b1
+*                   (2) '\<CPU-Compiler Directory>\<cpu>\<compiler>\' directory         See Note #1b2
+*
+*           (3) Since NO custom library modules are included, 'cpu.h' may ONLY use configurations from
+*               CPU configuration file 'cpu_cfg.h' that do NOT reference any custom library definitions.
+*
+*               In other words, 'cpu.h' may use 'cpu_cfg.h' configurations that are #define'd to numeric
+*               constants or to NULL (i.e. NULL-valued #define's); but may NOT use configurations to
+*               custom library #define's (e.g. DEF_DISABLED or DEF_ENABLED).
+*********************************************************************************************************
+*/
+
+// #include  <cpu_def.h>
+#include  <cpu_cfg.h>                                           /* See Note #3.                                         */
+
 /*$PAGE*/
 /*
 *********************************************************************************************************
@@ -84,6 +120,115 @@ typedef  CPU_INT32U  CPU_ADDR;
 /* 栈数据类型重定义 */
 typedef  CPU_INT32U             CPU_STK;                        /* Defines CPU stack word size (in octets).             */
 typedef  CPU_ADDR               CPU_STK_SIZE;                   /* Defines CPU stack      size (in number of CPU_STKs). */
+
+
+/*$PAGE*/
+/*
+*********************************************************************************************************
+*                                   CRITICAL SECTION CONFIGURATION
+*
+* Note(s) : (1) Configure CPU_CFG_CRITICAL_METHOD with CPU's/compiler's critical section method :
+*
+*                                                       Enter/Exit critical sections by ...
+*
+*                   CPU_CRITICAL_METHOD_INT_DIS_EN      Disable/Enable interrupts
+*                   CPU_CRITICAL_METHOD_STATUS_STK      Push/Pop       interrupt status onto stack
+*                   CPU_CRITICAL_METHOD_STATUS_LOCAL    Save/Restore   interrupt status to local variable
+*
+*               (a) CPU_CRITICAL_METHOD_INT_DIS_EN  is NOT a preferred method since it does NOT support
+*                   multiple levels of interrupts.  However, with some CPUs/compilers, this is the only
+*                   available method.
+*
+*               (b) CPU_CRITICAL_METHOD_STATUS_STK    is one preferred method since it supports multiple
+*                   levels of interrupts.  However, this method assumes that the compiler provides C-level
+*                   &/or assembly-level functionality for the following :
+*
+*                     ENTER CRITICAL SECTION :
+*                       (1) Push/save   interrupt status onto a local stack
+*                       (2) Disable     interrupts
+*
+*                     EXIT  CRITICAL SECTION :
+*                       (3) Pop/restore interrupt status from a local stack
+*
+*               (c) CPU_CRITICAL_METHOD_STATUS_LOCAL  is one preferred method since it supports multiple
+*                   levels of interrupts.  However, this method assumes that the compiler provides C-level
+*                   &/or assembly-level functionality for the following :
+*
+*                     ENTER CRITICAL SECTION :
+*                       (1) Save    interrupt status into a local variable
+*                       (2) Disable interrupts
+*
+*                     EXIT  CRITICAL SECTION :
+*                       (3) Restore interrupt status from a local variable
+*
+*           (2) Critical section macro's most likely require inline assembly.  If the compiler does NOT
+*               allow inline assembly in C source files, critical section macro's MUST call an assembly
+*               subroutine defined in a 'cpu_a.asm' file located in the following software directory :
+*
+*                   \<CPU-Compiler Directory>\<cpu>\<compiler>\
+*
+*                       where
+*                               <CPU-Compiler Directory>    directory path for common   CPU-compiler software
+*                               <cpu>                       directory name for specific CPU
+*                               <compiler>                  directory name for specific compiler
+*
+*           (3) (a) To save/restore interrupt status, a local variable 'cpu_sr' of type 'CPU_SR' MAY need
+*                   to be declared (e.g. if 'CPU_CRITICAL_METHOD_STATUS_LOCAL' method is configured).
+*
+*                   (1) 'cpu_sr' local variable SHOULD be declared via the CPU_SR_ALLOC() macro which, if
+*                        used, MUST be declared following ALL other local variables.
+*
+*                        Example :
+*
+*                           void  Fnct (void)
+*                           {
+*                               CPU_INT08U  val_08;
+*                               CPU_INT16U  val_16;
+*                               CPU_INT32U  val_32;
+*                               CPU_SR_ALLOC();         MUST be declared after ALL other local variables
+*                                   :
+*                                   :
+*                           }
+*
+*               (b) Configure 'CPU_SR' data type with the appropriate-sized CPU data type large enough to
+*                   completely store the CPU's/compiler's status word.
+*********************************************************************************************************
+*/
+/*$PAGE*/
+                                                                /* Configure CPU critical method      (see Note #1) :   */
+#define  CPU_CFG_CRITICAL_METHOD    CPU_CRITICAL_METHOD_STATUS_LOCAL
+
+typedef  CPU_INT32U                 CPU_SR;                     /* Defines   CPU status register size (see Note #3b).   */
+
+                                                                /* Allocates CPU status register word (see Note #3a).   */
+#if     (CPU_CFG_CRITICAL_METHOD == CPU_CRITICAL_METHOD_STATUS_LOCAL)
+#define  CPU_SR_ALLOC()             CPU_SR  cpu_sr = (CPU_SR)0
+#else
+#define  CPU_SR_ALLOC()
+#endif
+
+
+
+#define  CPU_INT_DIS()         do { cpu_sr = CPU_SR_Save(); } while (0) /* Save    CPU status word & disable interrupts.*/
+#define  CPU_INT_EN()          do { CPU_SR_Restore(cpu_sr); } while (0) /* Restore CPU status word.                     */
+
+
+#ifdef   CPU_CFG_INT_DIS_MEAS_EN
+                                                                        /* Disable interrupts, ...                      */
+                                                                        /* & start interrupts disabled time measurement.*/
+#define  CPU_CRITICAL_ENTER()  do { CPU_INT_DIS();         \
+                                    CPU_IntDisMeasStart(); }  while (0)
+                                                                        /* Stop & measure   interrupts disabled time,   */
+                                                                        /* ...  & re-enable interrupts.                 */
+#define  CPU_CRITICAL_EXIT()   do { CPU_IntDisMeasStop();  \
+                                    CPU_INT_EN();          }  while (0)
+
+#else
+
+#define  CPU_CRITICAL_ENTER()  do { CPU_INT_DIS(); } while (0)          /* Disable   interrupts.                        */
+#define  CPU_CRITICAL_EXIT()   do { CPU_INT_EN();  } while (0)          /* Re-enable interrupts.                        */
+
+#endif
 
 
 /*$PAGE*/

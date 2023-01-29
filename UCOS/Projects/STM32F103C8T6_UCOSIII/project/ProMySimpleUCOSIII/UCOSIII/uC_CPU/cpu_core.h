@@ -20,7 +20,7 @@
 */
 
 #include  <cpu.h>
-#include  <cpu_cfg.h>
+// #include  <cpu_cfg.h>
 
 /*
 *********************************************************************************************************
@@ -137,6 +137,17 @@ typedef  CPU_INT32U  CPU_TS_TMR_FREQ;
 CPU_CORE_EXT  CPU_TS_TMR_FREQ  CPU_TS_TmrFreq_Hz;               /* CPU ts tmr freq (in Hz).                             */
 #endif
 
+#ifdef  CPU_CFG_INT_DIS_MEAS_EN
+CPU_CORE_EXT  CPU_INT16U       CPU_IntDisMeasCtr;               /* Nbr tot    ints dis'd ctr.                           */
+CPU_CORE_EXT  CPU_INT16U       CPU_IntDisNestCtr;               /* Nbr nested ints dis'd ctr.                           */
+                                                                /* Ints dis'd time (in ts tmr cnts) : ...               */
+CPU_CORE_EXT  CPU_TS_TMR       CPU_IntDisMeasStart_cnts;        /* ...  start time.                                     */
+CPU_CORE_EXT  CPU_TS_TMR       CPU_IntDisMeasStop_cnts;         /* ...  stop  time.                                     */
+CPU_CORE_EXT  CPU_TS_TMR       CPU_IntDisMeasOvrhd_cnts;        /* ...        time meas ovrhd.                          */
+CPU_CORE_EXT  CPU_TS_TMR       CPU_IntDisMeasMaxCur_cnts;       /* ...     resetable max time dis'd.                    */
+CPU_CORE_EXT  CPU_TS_TMR       CPU_IntDisMeasMax_cnts;          /* ... non-resetable max time dis'd.                    */
+#endif
+
 /*$PAGE*/
 /*
 *********************************************************************************************************
@@ -145,6 +156,20 @@ CPU_CORE_EXT  CPU_TS_TMR_FREQ  CPU_TS_TmrFreq_Hz;               /* CPU ts tmr fr
 *********************************************************************************************************
 */
 void             CPU_Init                 (void);
+
+#ifdef  CPU_CFG_INT_DIS_MEAS_EN                                         /* -------- CPU INT DIS TIME MEAS FNCTS ------- */
+                                                                        /* See Note #1.                                 */
+CPU_TS_TMR       CPU_IntDisMeasMaxCurReset(void);
+
+CPU_TS_TMR       CPU_IntDisMeasMaxCurGet  (void);
+
+CPU_TS_TMR       CPU_IntDisMeasMaxGet     (void);
+
+
+void             CPU_IntDisMeasStart      (void);
+
+void             CPU_IntDisMeasStop       (void);
+#endif
 
 #if (CPU_CFG_TS_TMR_EN == DEF_ENABLED)
 void  CPU_TS_TmrInit(void);
