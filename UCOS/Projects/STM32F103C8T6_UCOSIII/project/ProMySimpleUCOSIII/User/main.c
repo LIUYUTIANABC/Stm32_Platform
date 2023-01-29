@@ -116,6 +116,28 @@ void delay (uint32_t count)
     for (; count!=0; count--);
 }
 
+/* 测试临界段；测量关中断时间 */
+void cpuIntTest(void)
+{
+    static u8 a = 0;
+    static CPU_TS_TMR temp = 0;
+
+    CPU_SR_ALLOC();
+
+    a++;
+    if (a >= 100)
+    {
+        a = 0;
+        temp = CPU_IntDisMeasMaxGet();
+        temp = CPU_IntDisMeasMaxCurReset();
+        CPU_CRITICAL_ENTER();
+        delay(20000000);
+        CPU_CRITICAL_EXIT();
+        temp = CPU_IntDisMeasMaxCurGet();
+        temp = temp;
+    }
+}
+
 /* 任务1 */
 void Task1( void *p_arg )
 {
@@ -127,6 +149,7 @@ void Task1( void *p_arg )
         TimeUse = TimeEnd - TimeStart;
         LED_BIT_GPIOC_PIN13 = 0;
         OSTimeDly(2);
+        cpuIntTest();
     }
 }
 

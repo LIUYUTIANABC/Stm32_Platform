@@ -241,4 +241,7 @@ typedef  CPU_INT32U                 CPU_SR;                     /* Defines   CPU
 void        CPU_IntDis       (void);
 void        CPU_IntEn        (void);
 
+CPU_SR      CPU_SR_Save      (void);
+void        CPU_SR_Restore   (CPU_SR      cpu_sr);
+
 #endif/* CPU_H */
