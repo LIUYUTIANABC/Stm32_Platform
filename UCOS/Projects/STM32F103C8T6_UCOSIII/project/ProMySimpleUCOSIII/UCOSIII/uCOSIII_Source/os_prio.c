@@ -1,0 +1,166 @@
+/*
+************************************************************************************************************************
+*                                                      uC/OS-III
+*                                                 The Real-Time Kernel
+*
+*                                  (c) Copyright 2009-2012; Micrium, Inc.; Weston, FL
+*                           All rights reserved.  Protected by international copyright laws.
+*
+*                                                 PRIORITY MANAGEMENT
+*
+* File    : OS_PRIO.C
+* By      : JJL
+* Version : V3.03.01
+*
+* LICENSING TERMS:
+* ---------------
+*           uC/OS-III is provided in source form for FREE short-term evaluation, for educational use or
+*           for peaceful research.  If you plan or intend to use uC/OS-III in a commercial application/
+*           product then, you need to contact Micrium to properly license uC/OS-III for its use in your
+*           application/product.   We provide ALL the source code for your convenience and to help you
+*           experience uC/OS-III.  The fact that the source is provided does NOT mean that you can use
+*           it commercially without paying a licensing fee.
+*
+*           Knowledge of the source code may NOT be used to develop a similar product.
+*
+*           Please help us continue to provide the embedded community with the finest software available.
+*           Your honesty is greatly appreciated.
+*
+*           You can contact us at www.micrium.com, or by phone at +1 (954) 217-2036.
+************************************************************************************************************************
+*/
+
+#define  MICRIUM_SOURCE
+#include <os.h>
+
+#ifdef VSC_INCLUDE_SOURCE_FILE_NAMES
+const  CPU_CHAR  *os_prio__c = "$Id: $";
+#endif
+
+
+CPU_DATA   OSPrioTbl[OS_PRIO_TBL_SIZE];                     /* Declare the array local to this file to allow for  ... */
+                                                            /* ... optimization.  In other words, this allows the ... */
+                                                            /* ... table to be located in fast memory                 */
+
+/*
+************************************************************************************************************************
+*                                               INITIALIZE THE PRIORITY LIST
+*
+* Description: This function is called by uC/OS-III to initialize the list of ready priorities.
+*
+* Arguments  : none
+*
+* Returns    : none
+*
+* Note       : This function is INTERNAL to uC/OS-III and your application should not call it.
+************************************************************************************************************************
+*/
+/* 初始化优先级表 */
+void  OS_PrioInit (void)
+{
+    CPU_DATA  i;
+
+    /* 默认全部初始化为0 */
+                                                            /* Clear the bitmap table ... no task is ready            */
+    for (i = 0u; i < OS_PRIO_TBL_SIZE; i++) {
+         OSPrioTbl[i] = (CPU_DATA)0;
+    }
+}
+
+/*
+************************************************************************************************************************
+*                                           GET HIGHEST PRIORITY TASK WAITING
+*
+* Description: This function is called by other uC/OS-III services to determine the highest priority task
+*              waiting on the event.
+*
+* Arguments  : none
+*
+* Returns    : The priority of the Highest Priority Task (HPT) waiting for the event
+*
+* Note(s)    : 1) This function is INTERNAL to uC/OS-III and your application MUST NOT call it.
+************************************************************************************************************************
+*/
+
+OS_PRIO  OS_PrioGetHighest (void)
+{
+    CPU_DATA  *p_tbl;
+    OS_PRIO    prio;
+
+
+    prio  = (OS_PRIO)0;
+    /* 获取优先级表首地址 */
+    p_tbl = &OSPrioTbl[0];
+    /* 找到数值不为0的数组成员 */
+    while (*p_tbl == (CPU_DATA)0) {                         /* Search the bitmap table for the highest priority       */
+        prio += DEF_INT_CPU_NBR_BITS;                       /* Compute the step of each CPU_DATA entry                */
+        p_tbl++;
+    }
+    /* 找到优先级表中置位的最高的优先级 */
+    prio += (OS_PRIO)CPU_CntLeadZeros(*p_tbl);              /* Find the position of the first bit set at the entry    */
+    return (prio);
+}
+
+/*
+************************************************************************************************************************
+*                                                  INSERT PRIORITY
+*
+* Description: This function is called to insert a priority in the priority table.
+*
+* Arguments  : prio     is the priority to insert
+*
+* Returns    : none
+*
+* Note(s)    : 1) This function is INTERNAL to uC/OS-III and your application MUST NOT call it.
+************************************************************************************************************************
+*/
+/* 置位优先级表中相应的位 */
+void  OS_PrioInsert (OS_PRIO  prio)
+{
+    CPU_DATA  bit;
+    CPU_DATA  bit_nbr;
+    OS_PRIO   ix;
+
+
+    /* 求模操作，获取优先级表数组的下标索引 */
+    ix             = prio / DEF_INT_CPU_NBR_BITS;
+    /* 求余操作，将优先级限制在DEF_INT_CPU_NBR_BITS之内 */
+    bit_nbr        = (CPU_DATA)prio & (DEF_INT_CPU_NBR_BITS - 1u);
+    /* 获取优先级在优先级表中对应的位的位置 */
+    bit            = 1u;
+    bit          <<= (DEF_INT_CPU_NBR_BITS - 1u) - bit_nbr;
+    /* 将优先级在优先级表中对应的位置1 */
+    OSPrioTbl[ix] |= bit;
+}
+
+/*
+************************************************************************************************************************
+*                                                   REMOVE PRIORITY
+*
+* Description: This function is called to remove a priority in the priority table.
+*
+* Arguments  : prio     is the priority to remove
+*
+* Returns    : none
+*
+* Note(s)    : 1) This function is INTERNAL to uC/OS-III and your application MUST NOT call it.
+************************************************************************************************************************
+*/
+/* 清除优先级表中相应的位 */
+void  OS_PrioRemove (OS_PRIO  prio)
+{
+    CPU_DATA  bit;
+    CPU_DATA  bit_nbr;
+    OS_PRIO   ix;
+
+
+    /* 清除优先级表中相应的位 */
+    ix             = prio / DEF_INT_CPU_NBR_BITS;
+    /* 求余操作，将优先级限制在DEF_INT_CPU_NBR_BITS之内 */
+    bit_nbr        = (CPU_DATA)prio & (DEF_INT_CPU_NBR_BITS - 1u);
+    /* 获取优先级在优先级表中对应的位的位置 */
+    bit            = 1u;
+    bit          <<= (DEF_INT_CPU_NBR_BITS - 1u) - bit_nbr;
+    /* 将优先级在优先级表中对应的位清零 */
+    OSPrioTbl[ix] &= ~bit;
+}

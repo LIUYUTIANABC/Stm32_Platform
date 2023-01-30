@@ -34,7 +34,7 @@
 *********************************************************************************************************
 */
 
-// #include  <cpu_def.h>
+#include  <cpu_def.h>
 #include  <cpu_cfg.h>                                           /* See Note #3.                                         */
 
 /*$PAGE*/
@@ -91,6 +91,35 @@ typedef  volatile  CPU_INT64U  CPU_REG64;                       /* 64-bit regist
 typedef            void      (*CPU_FNCT_VOID)(void);            /* See Note #2a.                                        */
 typedef            void      (*CPU_FNCT_PTR )(void *p_obj);     /* See Note #2b.                                        */
 
+/*$PAGE*/
+/*
+*********************************************************************************************************
+*                                       CPU WORD CONFIGURATION
+*
+* Note(s) : (1) Configure CPU_CFG_ADDR_SIZE, CPU_CFG_DATA_SIZE, & CPU_CFG_DATA_SIZE_MAX with CPU's &/or
+*               compiler's word sizes :
+*
+*                   CPU_WORD_SIZE_08             8-bit word size
+*                   CPU_WORD_SIZE_16            16-bit word size
+*                   CPU_WORD_SIZE_32            32-bit word size
+*                   CPU_WORD_SIZE_64            64-bit word size
+*
+*           (2) Configure CPU_CFG_ENDIAN_TYPE with CPU's data-word-memory order :
+*
+*               (a) CPU_ENDIAN_TYPE_BIG         Big-   endian word order (CPU words' most  significant
+*                                                                         octet @ lowest memory address)
+*               (b) CPU_ENDIAN_TYPE_LITTLE      Little-endian word order (CPU words' least significant
+*                                                                         octet @ lowest memory address)
+*********************************************************************************************************
+*/
+
+                                                                /* Define  CPU         word sizes (see Note #1) :       */
+#define  CPU_CFG_ADDR_SIZE              CPU_WORD_SIZE_32        /* Defines CPU address word size  (in octets).          */
+#define  CPU_CFG_DATA_SIZE              CPU_WORD_SIZE_32        /* Defines CPU data    word size  (in octets).          */
+#define  CPU_CFG_DATA_SIZE_MAX          CPU_WORD_SIZE_64        /* Defines CPU maximum word size  (in octets).          */
+
+#define  CPU_CFG_ENDIAN_TYPE            CPU_ENDIAN_TYPE_LITTLE  /* Defines CPU data    word-memory order (see Note #2). */
+
 
 /*
 *********************************************************************************************************
@@ -98,9 +127,23 @@ typedef            void      (*CPU_FNCT_PTR )(void *p_obj);     /* See Note #2b.
 *********************************************************************************************************
 */
 
-/* CPU address type based on address bus size.          */
+                                                                /* CPU address type based on address bus size.          */
+#if     (CPU_CFG_ADDR_SIZE == CPU_WORD_SIZE_32)
 typedef  CPU_INT32U  CPU_ADDR;
+#elif   (CPU_CFG_ADDR_SIZE == CPU_WORD_SIZE_16)
+typedef  CPU_INT16U  CPU_ADDR;
+#else
+typedef  CPU_INT08U  CPU_ADDR;
+#endif
 
+                                                                /* CPU data    type based on data    bus size.          */
+#if     (CPU_CFG_DATA_SIZE == CPU_WORD_SIZE_32)
+typedef  CPU_INT32U  CPU_DATA;
+#elif   (CPU_CFG_DATA_SIZE == CPU_WORD_SIZE_16)
+typedef  CPU_INT16U  CPU_DATA;
+#else
+typedef  CPU_INT08U  CPU_DATA;
+#endif
 
 /*
 *********************************************************************************************************
@@ -229,6 +272,37 @@ typedef  CPU_INT32U                 CPU_SR;                     /* Defines   CPU
 #define  CPU_CRITICAL_EXIT()   do { CPU_INT_EN();  } while (0)          /* Re-enable interrupts.                        */
 
 #endif
+
+/*$PAGE*/
+/*
+*********************************************************************************************************
+*                                    CPU COUNT ZEROS CONFIGURATION
+*
+* Note(s) : (1) (a) Configure CPU_CFG_LEAD_ZEROS_ASM_PRESENT  to define count leading  zeros bits
+*                   function(s) in :
+*
+*                   (1) 'cpu_a.asm',  if CPU_CFG_LEAD_ZEROS_ASM_PRESENT       #define'd in 'cpu.h'/
+*                                         'cpu_cfg.h' to enable assembly-optimized function(s)
+*
+*                   (2) 'cpu_core.c', if CPU_CFG_LEAD_ZEROS_ASM_PRESENT   NOT #define'd in 'cpu.h'/
+*                                         'cpu_cfg.h' to enable C-source-optimized function(s) otherwise
+*
+*               (b) Configure CPU_CFG_TRAIL_ZEROS_ASM_PRESENT to define count trailing zeros bits
+*                   function(s) in :
+*
+*                   (1) 'cpu_a.asm',  if CPU_CFG_TRAIL_ZEROS_ASM_PRESENT      #define'd in 'cpu.h'/
+*                                         'cpu_cfg.h' to enable assembly-optimized function(s)
+*
+*                   (2) 'cpu_core.c', if CPU_CFG_TRAIL_ZEROS_ASM_PRESENT  NOT #define'd in 'cpu.h'/
+*                                         'cpu_cfg.h' to enable C-source-optimized function(s) otherwise
+*********************************************************************************************************
+*/
+
+                                                                /* Configure CPU count leading  zeros bits ...          */
+#define  CPU_CFG_LEAD_ZEROS_ASM_PRESENT                         /* ... assembly-version (see Note #1a).                 */
+
+                                                                /* Configure CPU count trailing zeros bits ...          */
+#define  CPU_CFG_TRAIL_ZEROS_ASM_PRESENT                        /* ... assembly-version (see Note #1b).                 */
 
 
 /*$PAGE*/

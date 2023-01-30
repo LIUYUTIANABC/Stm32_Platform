@@ -61,6 +61,48 @@
 *                                            LOCAL TABLES
 *********************************************************************************************************
 */
+/*
+*********************************************************************************************************
+*                                  CPU COUNT LEAD ZEROs LOOKUP TABLE
+*
+* Note(s) : (1) Index into bit pattern table determines the number of leading zeros in an 8-bit value :
+*
+*                         b07  b06  b05  b04  b03  b02  b01  b00    # Leading Zeros
+*                         ---  ---  ---  ---  ---  ---  ---  ---    ---------------
+*                          1    x    x    x    x    x    x    x            0
+*                          0    1    x    x    x    x    x    x            1
+*                          0    0    1    x    x    x    x    x            2
+*                          0    0    0    1    x    x    x    x            3
+*                          0    0    0    0    1    x    x    x            4
+*                          0    0    0    0    0    1    x    x            5
+*                          0    0    0    0    0    0    1    x            6
+*                          0    0    0    0    0    0    0    1            7
+*                          0    0    0    0    0    0    0    0            8
+*********************************************************************************************************
+*/
+
+#if (!(defined(CPU_CFG_LEAD_ZEROS_ASM_PRESENT)) || \
+      (CPU_CFG_DATA_SIZE_MAX > CPU_CFG_DATA_SIZE))
+static  const  CPU_INT08U  CPU_CntLeadZerosTbl[256] = {                             /* Data vals :                      */
+/*   0    1    2    3    4    5    6    7    8    9    A    B    C    D    E    F   */
+    8u,  7u,  6u,  6u,  5u,  5u,  5u,  5u,  4u,  4u,  4u,  4u,  4u,  4u,  4u,  4u,  /*   0x00 to 0x0F                   */
+    3u,  3u,  3u,  3u,  3u,  3u,  3u,  3u,  3u,  3u,  3u,  3u,  3u,  3u,  3u,  3u,  /*   0x10 to 0x1F                   */
+    2u,  2u,  2u,  2u,  2u,  2u,  2u,  2u,  2u,  2u,  2u,  2u,  2u,  2u,  2u,  2u,  /*   0x20 to 0x2F                   */
+    2u,  2u,  2u,  2u,  2u,  2u,  2u,  2u,  2u,  2u,  2u,  2u,  2u,  2u,  2u,  2u,  /*   0x30 to 0x3F                   */
+    1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  /*   0x40 to 0x4F                   */
+    1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  /*   0x50 to 0x5F                   */
+    1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  /*   0x60 to 0x6F                   */
+    1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  1u,  /*   0x70 to 0x7F                   */
+    0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  /*   0x80 to 0x8F                   */
+    0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  /*   0x90 to 0x9F                   */
+    0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  /*   0xA0 to 0xAF                   */
+    0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  /*   0xB0 to 0xBF                   */
+    0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  /*   0xC0 to 0xCF                   */
+    0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  /*   0xD0 to 0xDF                   */
+    0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  /*   0xE0 to 0xEF                   */
+    0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u,  0u   /*   0xF0 to 0xFF                   */
+};
+#endif
 
 /*$PAGE*/
 /*
@@ -628,6 +670,131 @@ void  CPU_IntDisMeasStop (void)
             CPU_IntDisMeasMax_cnts    = time_ints_disd_cnts;
         }
     }
+}
+#endif
+
+/*$PAGE*/
+/*
+*********************************************************************************************************
+*                                         CPU_CntLeadZeros()
+*
+* Description : Count the number of contiguous, most-significant, leading zero bits in a data value.
+*
+* Argument(s) : val         Data value to count leading zero bits.
+*
+* Return(s)   : Number of contiguous, most-significant, leading zero bits in 'val', if NO error(s).
+*
+*               DEF_INT_CPU_U_MAX_VAL,                                              otherwise.
+*
+* Caller(s)   : CPU_CntTrailZeros(),
+*               Application.
+*
+*               This function is a CPU module application programming interface (API) function & MAY
+*               be called by application function(s).
+*
+* Note(s)     : (1) (a) Supports the following data value sizes :
+*
+*                       (1)  8-bits
+*                       (2) 16-bits
+*                       (3) 32-bits
+*                       (4) 64-bits
+*
+*                       See also 'cpu_def.h  CPU WORD CONFIGURATION  Note #1'.
+*
+*                   (b) (1) For  8-bit values :
+*
+*                                  b07  b06  b05  b04  b03  b02  b01  b00    # Leading Zeros
+*                                  ---  ---  ---  ---  ---  ---  ---  ---    ---------------
+*                                   1    x    x    x    x    x    x    x            0
+*                                   0    1    x    x    x    x    x    x            1
+*                                   0    0    1    x    x    x    x    x            2
+*                                   0    0    0    1    x    x    x    x            3
+*                                   0    0    0    0    1    x    x    x            4
+*                                   0    0    0    0    0    1    x    x            5
+*                                   0    0    0    0    0    0    1    x            6
+*                                   0    0    0    0    0    0    0    1            7
+*                                   0    0    0    0    0    0    0    0            8
+*
+*
+*                       (2) For 16-bit values :
+*
+*                             b15  b14  b13  ...  b04  b03  b02  b01  b00    # Leading Zeros
+*                             ---  ---  ---       ---  ---  ---  ---  ---    ---------------
+*                              1    x    x         x    x    x    x    x            0
+*                              0    1    x         x    x    x    x    x            1
+*                              0    0    1         x    x    x    x    x            2
+*                              :    :    :         :    :    :    :    :            :
+*                              :    :    :         :    :    :    :    :            :
+*                              0    0    0         1    x    x    x    x           11
+*                              0    0    0         0    1    x    x    x           12
+*                              0    0    0         0    0    1    x    x           13
+*                              0    0    0         0    0    0    1    x           14
+*                              0    0    0         0    0    0    0    1           15
+*                              0    0    0         0    0    0    0    0           16
+*
+*$PAGE*
+*                       (3) For 32-bit values :
+*
+*                             b31  b30  b29  ...  b04  b03  b02  b01  b00    # Leading Zeros
+*                             ---  ---  ---       ---  ---  ---  ---  ---    ---------------
+*                              1    x    x         x    x    x    x    x            0
+*                              0    1    x         x    x    x    x    x            1
+*                              0    0    1         x    x    x    x    x            2
+*                              :    :    :         :    :    :    :    :            :
+*                              :    :    :         :    :    :    :    :            :
+*                              0    0    0         1    x    x    x    x           27
+*                              0    0    0         0    1    x    x    x           28
+*                              0    0    0         0    0    1    x    x           29
+*                              0    0    0         0    0    0    1    x           30
+*                              0    0    0         0    0    0    0    1           31
+*                              0    0    0         0    0    0    0    0           32
+*
+*
+*                       (4) For 64-bit values :
+*
+*                             b63  b62  b61  ...  b04  b03  b02  b01  b00    # Leading Zeros
+*                             ---  ---  ---       ---  ---  ---  ---  ---    ---------------
+*                              1    x    x         x    x    x    x    x            0
+*                              0    1    x         x    x    x    x    x            1
+*                              0    0    1         x    x    x    x    x            2
+*                              :    :    :         :    :    :    :    :            :
+*                              :    :    :         :    :    :    :    :            :
+*                              0    0    0         1    x    x    x    x           59
+*                              0    0    0         0    1    x    x    x           60
+*                              0    0    0         0    0    1    x    x           61
+*                              0    0    0         0    0    0    1    x           62
+*                              0    0    0         0    0    0    0    1           63
+*                              0    0    0         0    0    0    0    0           64
+*
+*
+*                       See also 'CPU COUNT LEAD ZEROs LOOKUP TABLE  Note #1'.
+*********************************************************************************************************
+*/
+
+#ifndef   CPU_CFG_LEAD_ZEROS_ASM_PRESENT
+CPU_DATA  CPU_CntLeadZeros (CPU_DATA  val)
+{
+    CPU_DATA  nbr_lead_zeros;
+
+
+#if   (CPU_CFG_DATA_SIZE == CPU_WORD_SIZE_08)
+    nbr_lead_zeros = CPU_CntLeadZeros08((CPU_INT08U)val);
+
+#elif (CPU_CFG_DATA_SIZE == CPU_WORD_SIZE_16)
+    nbr_lead_zeros = CPU_CntLeadZeros16((CPU_INT16U)val);
+
+#elif (CPU_CFG_DATA_SIZE == CPU_WORD_SIZE_32)
+    nbr_lead_zeros = CPU_CntLeadZeros32((CPU_INT32U)val);
+
+#elif (CPU_CFG_DATA_SIZE == CPU_WORD_SIZE_64)
+    nbr_lead_zeros = CPU_CntLeadZeros64((CPU_INT64U)val);
+
+#else                                                           /* See Note #1a.                                        */
+    nbr_lead_zeros = DEF_INT_CPU_U_MAX_VAL;
+#endif
+
+
+    return (nbr_lead_zeros);
 }
 #endif
 

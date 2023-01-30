@@ -11,7 +11,7 @@
 #include <os_cfg.h>
 #include <cpu.h>
 #include <cpu_core.h>
-// #include <lib_def.h>
+#include <lib_def.h>
 #include <os_type.h>
 #include <os_cpu.h>
 
@@ -29,6 +29,7 @@
 #define  OS_EXT  extern
 #endif
 
+#define  OS_PRIO_TBL_SIZE          ((OS_CFG_PRIO_MAX - 1u) / (DEF_INT_CPU_NBR_BITS) + 1u)
 
 /*$PAGE*/
 /*
@@ -329,6 +330,12 @@ OS_EXT            OS_IDLE_CTR               OSIdleTaskCtr;
 OS_EXT            OS_TCB                    OSIdleTaskTCB;
 
 OS_EXT            OS_STATE                  OSRunning;                  /* Flag indicating that kernel is running     */
+
+                                                                        /* PRIORITIES ------------------------------- */
+OS_EXT            OS_PRIO                   OSPrioCur;                  /* Priority of current task                   */
+OS_EXT            OS_PRIO                   OSPrioHighRdy;              /* Priority of highest priority task          */
+OS_EXT            OS_PRIO                   OSPrioSaved;                /* Saved priority level when Post Deferred    */
+extern            CPU_DATA                  OSPrioTbl[OS_PRIO_TBL_SIZE];
 
                                                                         /* READY LIST ------------------------------- */
 OS_EXT            OS_RDY_LIST               OSRdyList[OS_CFG_PRIO_MAX]; /* Table of tasks ready to run                */

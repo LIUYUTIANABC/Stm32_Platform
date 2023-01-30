@@ -156,6 +156,7 @@ CPU_CORE_EXT  CPU_TS_TMR       CPU_IntDisMeasMax_cnts;          /* ... non-reset
 */
 void             CPU_Init                 (void);
 
+/* 测量中断禁止时间函数 */
 #ifdef  CPU_CFG_INT_DIS_MEAS_EN                                         /* -------- CPU INT DIS TIME MEAS FNCTS ------- */
                                                                         /* See Note #1.                                 */
 CPU_TS_TMR       CPU_IntDisMeasMaxCurReset(void);
@@ -170,6 +171,12 @@ void             CPU_IntDisMeasStart      (void);
 void             CPU_IntDisMeasStop       (void);
 #endif
 
+/* 任务优先级 前导0 和 后导0 函数 */
+                                                                        /* ----------- CPU CNT ZEROS FNCTS ------------ */
+CPU_DATA         CPU_CntLeadZeros         (CPU_DATA    val);
+CPU_DATA         CPU_CntTrailZeros        (CPU_DATA    val);
+
+/* 时间戳 函数*/
 #if (CPU_CFG_TS_TMR_EN == DEF_ENABLED)
 void  CPU_TS_TmrInit(void);
 void  CPU_TS_TmrFreqSet (CPU_TS_TMR_FREQ  freq_hz);
