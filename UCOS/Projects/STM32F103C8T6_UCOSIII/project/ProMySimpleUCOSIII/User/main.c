@@ -109,7 +109,7 @@ int main(void)
                 (OS_PRIO)       3,
                 (CPU_STK*)      &Task3Stk[0],
                 (CPU_STK_SIZE)  TASK3_STK_SIZE,
-                (OS_ERR *)&err );
+                (OS_ERR *)      &err );
 
 #if 0
     /* 将任务加入到就绪列表 */
@@ -183,9 +183,9 @@ void Task2( void *p_arg )
 void Task3( void *p_arg )
 {
     for ( ;; ) {
-        flag3 = 1;
+        LED_BIT_GPIOC_PIN15 = 1;
         OSTimeDly(2);
-        flag3 = 0;
+        LED_BIT_GPIOC_PIN15 = 0;
         OSTimeDly(2);
     }
 }

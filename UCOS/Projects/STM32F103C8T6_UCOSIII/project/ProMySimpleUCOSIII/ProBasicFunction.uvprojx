@@ -537,6 +537,11 @@
               <FileType>1</FileType>
               <FilePath>.\UCOSIII\uCOSIII_Source\os_cfg_app.c</FilePath>
             </File>
+            <File>
+              <FileName>os_prio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\UCOSIII\uCOSIII_Source\os_prio.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -561,6 +566,13 @@
         </Group>
         <Group>
           <GroupName>uC_LIB</GroupName>
+          <Files>
+            <File>
+              <FileName>lib_def.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\UCOSIII\uC_LIB\lib_def.h</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>uC_CPU</GroupName>
@@ -584,6 +596,11 @@
               <FileName>cpu_core.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\UCOSIII\uC_CPU\cpu_core.h</FilePath>
+            </File>
+            <File>
+              <FileName>cpu_def.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\UCOSIII\uC_CPU\cpu_def.h</FilePath>
             </File>
           </Files>
         </Group>

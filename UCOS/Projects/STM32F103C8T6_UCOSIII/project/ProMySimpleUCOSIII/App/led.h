@@ -3,6 +3,7 @@
 
 #include "system.h"
 
+#define LED_BIT_GPIOC_PIN15 PCout(15)
 #define LED_BIT_GPIOC_PIN14 PCout(14)
 #define LED_BIT_GPIOC_PIN13 PCout(13)
 
