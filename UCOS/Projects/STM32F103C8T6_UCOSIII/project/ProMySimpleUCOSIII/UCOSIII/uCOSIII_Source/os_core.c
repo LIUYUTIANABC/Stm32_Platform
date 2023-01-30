@@ -29,7 +29,14 @@ void  OSInit (OS_ERR  *p_err)
     OSTCBCurPtr                     = (OS_TCB *)0;          /* Initialize OS_TCB pointers to a known state            */
     OSTCBHighRdyPtr                 = (OS_TCB *)0;
 
-    /* 初始化两个全局TCB，这两个TCB用于任务切换 */
+    /* 初始化优先级变量 */
+    OSPrioCur                       = (OS_PRIO)0;
+    OSPrioHighRdy                   = (OS_PRIO)0;
+
+    /* 初始化优先级表 */
+    OS_PrioInit();
+
+    /* 初始化就绪列表 */
     OS_RdyListInit();                                       /* Initialize the Ready List                              */
 
     /* 初始化空闲任务 */
@@ -70,7 +77,7 @@ void  OSSched (void)
         OSTCBHighRdyPtr = OSRdyList[0].HeadPtr;
     }
 #endif
-
+#if 0
     /* 如果当前任务是空闲任务，那么就去尝试执行任务1或者任务2，
     看看他们的延时时间是否结束，如果任务的延时时间均没有到期，
     那就返回继续执行空闲任务 */
@@ -132,6 +139,30 @@ void  OSSched (void)
 
     /* 任务切换 */
     OS_TASK_SW();
+#endif
+
+    CPU_SR_ALLOC();
+
+    /* 进入临界区 */
+    OS_CRITICAL_ENTER();
+
+    /* 查找最高优先级的任务 */
+    OSPrioHighRdy   = OS_PrioGetHighest();
+    OSTCBHighRdyPtr = OSRdyList[OSPrioHighRdy].HeadPtr;
+
+    /* 如果最高优先级的任务是当前任务则直接返回，不进行任务切换 */
+    if (OSTCBHighRdyPtr == OSTCBCurPtr)
+    {
+        /* 退出临界区 */
+        OS_CRITICAL_EXIT();
+
+        return;
+    }
+    /* 退出临界区 */
+    OS_CRITICAL_EXIT();
+
+    /* 任务切换 */
+    OS_TASK_SW();
 }
 
 /*$PAGE*/
@@ -161,9 +192,23 @@ void  OSSched (void)
 
 void  OSStart (OS_ERR  *p_err)
 {
-    if (OSRunning == OS_STATE_OS_STOPPED) {
+    if (OSRunning == OS_STATE_OS_STOPPED)
+    {
+    #if 0
         /* 手动配置任务1先运行 */
         OSTCBHighRdyPtr = OSRdyList[0].HeadPtr;
+    #endif
+        /* 寻找最高的优先级 */
+        OSPrioHighRdy   = OS_PrioGetHighest();
+        OSPrioCur       = OSPrioHighRdy;
+
+        /* 找到最高优先级的TCB */
+        OSTCBHighRdyPtr = OSRdyList[OSPrioHighRdy].HeadPtr;
+        OSTCBCurPtr     = OSTCBHighRdyPtr;
+
+        /* 标记OS开始运行 */
+        OSRunning       = OS_STATE_OS_RUNNING;
+
         /* 启动任务切换，不会返回 */
         OSStartHighRdy();                                   /* Execute target specific code to start task             */
         /* 不会运行到这里，运行到这里表示发生了致命的错误 */
@@ -232,65 +277,10 @@ void  OS_IdleTaskInit (OS_ERR  *p_err)
     OSTaskCreate ((OS_TCB*)      &OSIdleTaskTCB,
                 (OS_TASK_PTR ) OS_IdleTask,
                 (void *)       0,
+                (OS_PRIO)      (OS_CFG_PRIO_MAX - 1u),
                 (CPU_STK*)     OSCfg_IdleTaskStkBasePtr,
                 (CPU_STK_SIZE) OSCfg_IdleTaskStkSize,
                 (OS_ERR *)     &p_err);
-}
-
-/*$PAGE*/
-/*
-************************************************************************************************************************
-*                                                    INITIALIZATION
-*                                               READY LIST INITIALIZATION
-*
-* Description: This function is called by OSInit() to initialize the ready list.  The ready list contains a list of all
-*              the tasks that are ready to run.  The list is actually an array of OS_RDY_LIST.  An OS_RDY_LIST contains
-*              three fields.  The number of OS_TCBs in the list (i.e. .NbrEntries), a pointer to the first OS_TCB in the
-*              OS_RDY_LIST (i.e. .HeadPtr) and a pointer to the last OS_TCB in the OS_RDY_LIST (i.e. .TailPtr).
-*
-*              OS_TCBs are doubly linked in the OS_RDY_LIST and each OS_TCB points pack to the OS_RDY_LIST it belongs
-*              to.
-*
-*              'OS_RDY_LIST  OSRdyTbl[OS_CFG_PRIO_MAX]'  looks like this once initialized:
-*
-*                               +---------------+--------------+
-*                               |               | TailPtr      |-----> 0
-*                          [0]  | NbrEntries=0  +--------------+
-*                               |               | HeadPtr      |-----> 0
-*                               +---------------+--------------+
-*                               |               | TailPtr      |-----> 0
-*                          [1]  | NbrEntries=0  +--------------+
-*                               |               | HeadPtr      |-----> 0
-*                               +---------------+--------------+
-*                                       :              :
-*                                       :              :
-*                                       :              :
-*                               +---------------+--------------+
-*                               |               | TailPtr      |-----> 0
-*          [OS_CFG_PRIO_MAX-1]  | NbrEntries=0  +--------------+
-*                               |               | HeadPtr      |-----> 0
-*                               +---------------+--------------+
-*
-*
-* Arguments  : none
-*
-* Returns    : none
-*
-* Note(s)    : This function is INTERNAL to uC/OS-III and your application should not call it.
-************************************************************************************************************************
-*/
-
-void  OS_RdyListInit (void)
-{
-    OS_PRIO       i;
-    OS_RDY_LIST  *p_rdy_list;
-
-    for (i = 0u; i < OS_CFG_PRIO_MAX; i++) {                /* Initialize the array of OS_RDY_LIST at each priority   */
-        p_rdy_list = &OSRdyList[i];
-        // p_rdy_list->NbrEntries = (OS_OBJ_QTY)0;
-        p_rdy_list->HeadPtr    = (OS_TCB   *)0;
-        p_rdy_list->TailPtr    = (OS_TCB   *)0;
-    }
 }
 
 /*$PAGE*/

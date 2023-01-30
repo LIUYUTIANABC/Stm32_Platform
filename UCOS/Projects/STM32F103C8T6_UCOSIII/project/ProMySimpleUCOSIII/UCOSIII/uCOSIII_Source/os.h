@@ -16,6 +16,18 @@
 #include <os_cpu.h>
 
 
+/*
+************************************************************************************************************************
+*                                               CRITICAL SECTION HANDLING
+************************************************************************************************************************
+*/
+#define  OS_CRITICAL_ENTER()                    CPU_CRITICAL_ENTER()
+
+#define  OS_CRITICAL_ENTER_CPU_EXIT()
+
+#define  OS_CRITICAL_EXIT()                     CPU_CRITICAL_EXIT()
+
+#define  OS_CRITICAL_EXIT_NO_SCHED()            CPU_CRITICAL_EXIT()
 
 /*
 ************************************************************************************************************************
@@ -49,6 +61,23 @@
 #define  OS_STATE_OS_STOPPED                    (OS_STATE)(0u)
 #define  OS_STATE_OS_RUNNING                    (OS_STATE)(1u)
 
+/*
+========================================================================================================================
+*                                                   OS OBJECT TYPES
+*
+* Note(s) : (1) OS_OBJ_TYPE_&&& #define values specifically chosen as ASCII representations of the kernel
+*               object types.  Memory displays of kernel objects will display the kernel object TYPEs with
+*               their chosen ASCII names.
+========================================================================================================================
+*/
+
+/*
+------------------------------------------------------------------------------------------------------------------------
+*                                                       PRIORITY
+------------------------------------------------------------------------------------------------------------------------
+*/
+                                                                    /* Dflt prio to init task TCB                     */
+#define  OS_PRIO_INIT                       (OS_PRIO)(OS_CFG_PRIO_MAX)
 
 /*$PAGE*/
 /*
@@ -432,8 +461,28 @@ CPU_STK      *OSTaskStkInit             (OS_TASK_PTR            p_task,
 ************************************************************************************************************************
 */
 
+/* ----------------------------------------------- PRIORITY MANAGEMENT ---------------------------------------------- */
+
+void          OS_PrioInit               (void);
+
+void          OS_PrioInsert             (OS_PRIO                prio);
+
+void          OS_PrioRemove             (OS_PRIO                prio);
+
+OS_PRIO       OS_PrioGetHighest         (void);
+
 /* --------------------------------------------- READY LIST MANAGEMENT ---------------------------------------------- */
 
 void          OS_RdyListInit            (void);
+
+void          OS_RdyListInsert          (OS_TCB                *p_tcb);
+
+void          OS_RdyListInsertHead      (OS_TCB                *p_tcb);
+
+void          OS_RdyListInsertTail      (OS_TCB                *p_tcb);
+
+void          OS_RdyListMoveHeadToTail  (OS_RDY_LIST           *p_rdy_list);
+
+void          OS_RdyListRemove          (OS_TCB                *p_tcb);
 
 #endif

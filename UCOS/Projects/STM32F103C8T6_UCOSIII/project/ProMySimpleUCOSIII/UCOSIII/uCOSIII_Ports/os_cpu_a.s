@@ -28,8 +28,8 @@
 ;********************************************************************************************************
 
     ; IMPORT  OSRunning                                           ; External references
-    ; IMPORT  OSPrioCur
-    ; IMPORT  OSPrioHighRdy
+    IMPORT  OSPrioCur
+    IMPORT  OSPrioHighRdy
     IMPORT  OSTCBCurPtr             ; 外部文件引人的参考(1)
     IMPORT  OSTCBHighRdyPtr
     ; IMPORT  OSIntExit
@@ -241,6 +241,13 @@ OS_CPU_PendSVHandler
     ; 把下一个要运行的任务的栈内容加载到CPU寄存器中
     ;--------------------------------------------------------------
 OS_CPU_PendSVHandler_nosave
+    ; OSPrioCur   = OSPrioHighRdy
+    LDR     R0, = OSPrioCur
+    LDR     R1, = OSPrioHighRdy
+    LDRB    R2, [R1]
+    STRB    R2, [R0]
+
+    ; OSTCBCurPtr = OSTCBHighRdyPtr
     ; 加载 OSTCBCurPtr 指针的地址到R0，这里LDR属于伪指令
     LDR     R0, = OSTCBCurPtr
     ; 加载 OSTCBHighRdyPtr 指针的地址到R1，这里LDR属于伪指令

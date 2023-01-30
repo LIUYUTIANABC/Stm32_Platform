@@ -3,6 +3,34 @@
 /*$PAGE*/
 /*
 ************************************************************************************************************************
+*                                               INITIALIZE TCB FIELDS
+*
+* Description: This function is called to initialize a TCB to default values
+*
+* Arguments  : p_tcb    is a pointer to the TCB to initialize
+*
+* Returns    : none
+*
+* Note(s)    : This function is INTERNAL to uC/OS-III and your application should not call it.
+************************************************************************************************************************
+*/
+
+void  OS_TaskInitTCB (OS_TCB  *p_tcb)
+{
+    p_tcb->StkPtr             = (CPU_STK       *)0;
+    p_tcb->StkSize            = (CPU_STK_SIZE   )0u;
+
+    p_tcb->TaskDelayTicks     = (OS_TICK       )0u;
+
+    p_tcb->Prio               = (OS_PRIO        )OS_PRIO_INIT;
+
+    p_tcb->NextPtr            = (OS_TCB        *)0;
+    p_tcb->PrevPtr            = (OS_TCB        *)0;
+}
+
+/*$PAGE*/
+/*
+************************************************************************************************************************
 *                                                    CREATE A TASK
 *
 * Description: This function is used to have uC/OS-III manage the execution of a task.  Tasks can either be created
@@ -89,32 +117,39 @@
 void  OSTaskCreate (OS_TCB        *p_tcb,
                     OS_TASK_PTR    p_task,
                     void          *p_arg,
+                    OS_PRIO        prio,
                     CPU_STK       *p_stk_base,
                     CPU_STK_SIZE   stk_size,
                     OS_ERR        *p_err)
 {
     CPU_STK       *p_sp;
     // CPU_STK       *p_stk_limit;
-    // CPU_SR_ALLOC();
+    CPU_SR_ALLOC();
 
+    /* 初始化TCB为默认值 */
+    OS_TaskInitTCB(p_tcb);
                                                             /* --------------- CLEAR THE TASK'S STACK --------------- */
     p_sp = OSTaskStkInit(p_task,
                          p_arg,
                          p_stk_base,
                          stk_size);
 
+    p_tcb->Prio = prio;
+
                                                             /* -------------- INITIALIZE THE TCB FIELDS ------------- */
     p_tcb->StkPtr        = p_sp;                            /* Save the new top-of-stack pointer                      */
     p_tcb->StkSize       = stk_size;                        /* Save the stack size (in number of CPU_STK elements)    */
     p_tcb->TaskDelayTicks = 0;
 
-   *p_err = OS_ERR_NONE;
+    /* 进入临界段 */
+    OS_CRITICAL_ENTER();
 
-    // OSTaskCreateHook(p_tcb);                                /* Call user defined hook                                 */
+    /* 将任务添加到就绪列表 */
+    OS_PrioInsert(p_tcb->Prio);
+    OS_RdyListInsertTail(p_tcb);
 
-    // OS_CRITICAL_ENTER();
-    // OS_PrioInsert(p_tcb->Prio);
-    // OS_RdyListInsertTail(p_tcb);
+    /* 退出临界段 */
+    OS_CRITICAL_EXIT();
 
     // if (OSRunning != OS_STATE_OS_RUNNING) {                 /* Return if multitasking has not started                 */
     //     OS_CRITICAL_EXIT();
@@ -122,4 +157,5 @@ void  OSTaskCreate (OS_TCB        *p_tcb,
     // }
 
     // OSSched();
+   *p_err = OS_ERR_NONE;
 }
