@@ -296,7 +296,7 @@ typedef  struct  os_rdy_list         OS_RDY_LIST;
 struct  os_rdy_list {
     OS_TCB              *HeadPtr;                           /* Pointer to task that will run at selected priority     */
     OS_TCB              *TailPtr;                           /* Pointer to last task          at selected priority     */
-    // OS_OBJ_QTY           NbrEntries;                        /* Number of entries             at selected priority     */
+    OS_OBJ_QTY           NbrEntries;                        /* Number of entries             at selected priority     */
 };
 
 
@@ -312,6 +312,13 @@ struct os_tcb {
     CPU_STK_SIZE         StkSize;                           /* Size of task stack (in number of stack elements)       */
     /* 任务延时周期个数 */
     OS_TICK             TaskDelayTicks;
+    /* 任务优先级 */
+    OS_PRIO             Prio;
+
+    /* 就绪列表双向链表的下一个指针 */
+    OS_TCB              *NextPtr;
+    /* 就绪列表双向链表的前一个指针 */
+    OS_TCB              *PrevPtr;
 };
 
 
