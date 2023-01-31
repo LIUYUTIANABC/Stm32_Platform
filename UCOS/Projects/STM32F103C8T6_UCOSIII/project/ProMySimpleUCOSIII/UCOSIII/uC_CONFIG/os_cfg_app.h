@@ -39,4 +39,7 @@
                                                             /* ---------------------- IDLE TASK --------------------- */
 #define  OS_CFG_IDLE_TASK_STK_SIZE       128u               /* Stack size (number of CPU_STK elements)                */
 
+/* 时基列表的大小 */
+#define  OS_CFG_TICK_WHEEL_SIZE           17u               /* Number of 'spokes' in tick  wheel; SHOULD be prime     */
+
 #endif

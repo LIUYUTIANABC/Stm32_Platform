@@ -316,6 +316,8 @@ typedef  struct  os_tcb              OS_TCB;
 
 typedef  struct  os_rdy_list         OS_RDY_LIST;
 
+typedef  struct  os_tick_spoke       OS_TICK_SPOKE;
+
 /*
 ------------------------------------------------------------------------------------------------------------------------
 *                                                      READY LIST
@@ -348,6 +350,14 @@ struct os_tcb {
     OS_TCB              *NextPtr;
     /* 就绪列表双向链表的前一个指针 */
     OS_TCB              *PrevPtr;
+
+    /* 时基列表相关字段 */
+    OS_TCB          *TickNextPtr;
+    OS_TCB          *TickPrevPtr;
+    OS_TICK_SPOKE   *TickSpokePtr;
+
+    OS_TICK         TickCtrMatch;
+    OS_TICK         TickRemain;
 };
 
 
@@ -380,6 +390,10 @@ OS_EXT            OS_RDY_LIST               OSRdyList[OS_CFG_PRIO_MAX]; /* Table
 OS_EXT            OS_TCB                   *OSTCBCurPtr;                /* Pointer to currently running TCB           */
 OS_EXT            OS_TCB                   *OSTCBHighRdyPtr;            /* Pointer to highest priority  TCB           */
 
+
+                                                                        /* TICK TASK -------------------------------- */
+OS_EXT            OS_TICK                   OSTickCtr;                  /* Cnts the #ticks since startup or last set  */
+
 /*$PAGE*/
 /*
 ************************************************************************************************************************
@@ -391,6 +405,10 @@ OS_EXT            OS_TCB                   *OSTCBHighRdyPtr;            /* Point
 
 extern  CPU_STK     * const OSCfg_IdleTaskStkBasePtr;
 extern  CPU_STK_SIZE  const OSCfg_IdleTaskStkSize;
+
+extern  OS_TICK_SPOKE  OSCfg_TickWheel[];
+
+extern  OS_OBJ_QTY    const OSCfg_TickWheelSize;
 
 /*
 ************************************************************************************************************************
@@ -412,6 +430,21 @@ void  OSTaskCreate (OS_TCB        *p_tcb,
                     CPU_STK       *p_stk_base,
                     CPU_STK_SIZE   stk_size,
                     OS_ERR        *p_err);
+
+/*$PAGE*/
+/*
+------------------------------------------------------------------------------------------------------------------------
+*                                                    TICK DATA TYPE
+------------------------------------------------------------------------------------------------------------------------
+*/
+
+struct  os_tick_spoke {
+    OS_TCB              *FirstPtr;                          /* Pointer to list of tasks in tick spoke                 */
+    OS_OBJ_QTY           NbrEntries;                        /* Current number of entries in the tick spoke            */
+    OS_OBJ_QTY           NbrEntriesMax;                     /* Peak number of entries in the tick spoke               */
+};
+
+
 
 /*$PAGE*/
 /* ================================================================================================================== */
@@ -438,6 +471,8 @@ void          OSStart                   (OS_ERR  *p_err);
 void          OS_IdleTask               (void                  *p_arg);
 
 void          OS_IdleTaskInit           (OS_ERR                *p_err);
+
+void          OS_TaskRdy                (OS_TCB                *p_tcb);
 
 
 /*$PAGE*/
@@ -485,5 +520,18 @@ void          OS_RdyListInsertTail      (OS_TCB                *p_tcb);
 void          OS_RdyListMoveHeadToTail  (OS_RDY_LIST           *p_rdy_list);
 
 void          OS_RdyListRemove          (OS_TCB                *p_tcb);
+
+/* ---------------------------------------------- TICK LIST MANAGEMENT ---------------------------------------------- */
+
+void          OS_TickListInit           (void);
+
+void          OS_TickListInsert         (OS_TCB                *p_tcb,
+                                         OS_TICK                time,
+                                         OS_OPT                 opt,
+                                         OS_ERR                *p_err);
+
+void          OS_TickListRemove         (OS_TCB                *p_tcb);
+
+void          OS_TickListUpdate         (void);
 
 #endif

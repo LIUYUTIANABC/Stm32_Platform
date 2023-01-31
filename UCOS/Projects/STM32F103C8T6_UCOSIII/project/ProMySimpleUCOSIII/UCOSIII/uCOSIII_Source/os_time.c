@@ -90,13 +90,19 @@ void  OSTimeDly (OS_TICK   dly)
 
     /* 进入临界区 */
     OS_CRITICAL_ENTER();
-
+#if 0
     /* 设置延时时间 */
     OSTCBCurPtr->TaskDelayTicks = dly;
 
     /* 从就绪列表中移除 */
     // OS_RdyListRemove(OSTCBCurPtr);
     OS_PrioRemove(OSTCBCurPtr->Prio);
+#endif
+    /* 插入时基列表 */
+    OS_TickListInsert(OSTCBCurPtr, dly);
+
+    /* 从就绪列表移除 */
+    OS_RdyListRemove(OSTCBCurPtr);
 
     /* 退出临界区 */
     OS_CRITICAL_EXIT();
@@ -121,6 +127,7 @@ void  OSTimeDly (OS_TICK   dly)
 
 void  OSTimeTick (void)
 {
+#if 0
     unsigned int i;
     CPU_SR_ALLOC();
 
@@ -151,9 +158,11 @@ void  OSTimeTick (void)
             }
         }
     }
-
     /* 退出临界区 */
     OS_CRITICAL_EXIT();
+#endif
+    /* 更新时基列表 */
+    OS_TickListUpdate();
 
     /* 任务调度 */
     OSSched();

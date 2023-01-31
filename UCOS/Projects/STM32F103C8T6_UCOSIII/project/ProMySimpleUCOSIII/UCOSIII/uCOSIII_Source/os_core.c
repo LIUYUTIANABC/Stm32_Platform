@@ -725,3 +725,27 @@ void  OS_RdyListRemove (OS_TCB  *p_tcb)
     p_tcb->PrevPtr = (OS_TCB *)0;
     p_tcb->NextPtr = (OS_TCB *)0;
 }
+
+/*$PAGE*/
+/*
+************************************************************************************************************************
+*                                                     READY A TASK
+*
+* Description: This function is called to make a task ready-to-run.
+*
+* Arguments  : p_tcb          is a pointer to the OS_TCB of the task to make ready-to-run
+*              -----
+*
+* Returns    : none
+*
+* Note(s)    : 1) This function is INTERNAL to uC/OS-III and your application MUST NOT call it.
+************************************************************************************************************************
+*/
+void  OS_TaskRdy (OS_TCB  *p_tcb)
+{
+    /* 从时基列表删除 */
+    OS_TickListRemove(p_tcb);
+
+    /* 插入就绪列表 */
+    OS_RdyListInsert(p_tcb);
+}
