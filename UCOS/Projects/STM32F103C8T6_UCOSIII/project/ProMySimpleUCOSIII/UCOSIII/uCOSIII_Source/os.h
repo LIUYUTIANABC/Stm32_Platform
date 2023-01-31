@@ -525,10 +525,7 @@ void          OS_RdyListRemove          (OS_TCB                *p_tcb);
 
 void          OS_TickListInit           (void);
 
-void          OS_TickListInsert         (OS_TCB                *p_tcb,
-                                         OS_TICK                time,
-                                         OS_OPT                 opt,
-                                         OS_ERR                *p_err);
+void          OS_TickListInsert         (OS_TCB *p_tcb, OS_TICK time);
 
 void          OS_TickListRemove         (OS_TCB                *p_tcb);
 

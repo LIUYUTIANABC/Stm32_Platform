@@ -542,6 +542,11 @@
               <FileType>1</FileType>
               <FilePath>.\UCOSIII\uCOSIII_Source\os_prio.c</FilePath>
             </File>
+            <File>
+              <FileName>os_tick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\UCOSIII\uCOSIII_Source\os_tick.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
