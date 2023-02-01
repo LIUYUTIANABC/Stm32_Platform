@@ -166,3 +166,362 @@ void  OSTaskCreate (OS_TCB        *p_tcb,
     // OSSched();
    *p_err = OS_ERR_NONE;
 }
+
+/*$PAGE*/
+/*
+************************************************************************************************************************
+*                                                   SUSPEND A TASK
+*
+* Description: This function is called to suspend a task.  The task can be the calling task if 'p_tcb' is a NULL pointer
+*              or the pointer to the TCB of the calling task.
+*
+* Arguments  : p_tcb    is a pointer to the TCB to suspend.
+*                       If p_tcb is a NULL pointer then, suspend the current task.
+*
+*              p_err    is a pointer to a variable that will receive an error code from this function.
+*
+*                           OS_ERR_NONE                      if the requested task is suspended
+*                           OS_ERR_SCHED_LOCKED              you can't suspend the current task is the scheduler is
+*                                                            locked
+*                           OS_ERR_TASK_SUSPEND_ISR          if you called this function from an ISR
+*                           OS_ERR_TASK_SUSPEND_IDLE         if you attempted to suspend the idle task which is not
+*                                                            allowed.
+*                           OS_ERR_TASK_SUSPEND_INT_HANDLER  if you attempted to suspend the idle task which is not
+*                                                            allowed.
+*
+* Note(s)    : 1) You should use this function with great care.  If you suspend a task that is waiting for an event
+*                 (i.e. a message, a semaphore, a queue ...) you will prevent this task from running when the event
+*                 arrives.
+************************************************************************************************************************
+*/
+#if OS_CFG_TASK_SUSPEND_EN > 0u
+void   OSTaskSuspend (OS_TCB  *p_tcb,
+                    OS_ERR  *p_err)
+{
+    CPU_SR_ALLOC();
+
+#if 0/* 屏蔽开始 */
+    #ifdef OS_SAFETY_CRITICAL
+    /* 安全检查，OS_SAFETY_CRITICAL_EXCEPTION()函数需要用户自行编写 */
+    if (p_err == (OS_ERR *)0)
+    {
+        OS_SAFETY_CRITICAL_EXCEPTION();
+        return;
+    }
+#endif
+
+#if OS_CFG_CALLED_FROM_ISR_CHK_EN > 0u
+    /* 不能在ISR程序中调用该函数 */
+    if (OSIntNestingCtr > (OS_NESTING_CTR)0)
+    {
+        *p_err = OS_ERR_TASK_SUSPEND_ISR;
+        return;
+    }
+#endif
+
+    /* 不能挂起空闲任务 */
+    if (p_tcb == &OSIdleTaskTCB)
+    {
+        *p_err = OS_ERR_TASK_SUSPEND_IDLE;
+        return;
+    }
+
+#if OS_CFG_ISR_POST_DEFERRED_EN > 0u
+    /* 不能挂起中断处理任务 */
+    if (p_tcb == &OSIntQTaskTCB)
+    {
+        *p_err = OS_ERR_TASK_SUSPEND_INT_HANDLER;
+        return;
+    }
+#endif
+
+#endif/* 屏蔽结束 */
+
+    CPU_CRITICAL_ENTER();
+
+    /* 是否挂起自己 */
+    if (p_tcb == (OS_TCB *)0) {
+        p_tcb = OSTCBCurPtr;
+    }
+
+    // if (p_tcb == OSTCBCurPtr) {
+    //     /* 如果调度器锁住则不能挂起自己 */
+    //     if (OSSchedLockNestingCtr > (OS_NESTING_CTR)0) {
+    //             CPU_CRITICAL_EXIT();
+    //             *p_err = OS_ERR_SCHED_LOCKED;
+    //             return;
+    //         }
+    // }
+
+    *p_err = OS_ERR_NONE;
+
+    /* 根据任务的状态来决定挂起的动作 */
+    switch (p_tcb->TaskState)
+    {
+        case OS_TASK_STATE_RDY:
+            // OS_CRITICAL_ENTER_CPU_CRITICAL_EXIT();
+            p_tcb->TaskState  =  OS_TASK_STATE_SUSPENDED;
+            p_tcb->SuspendCtr = (OS_NESTING_CTR)1;
+            OS_RdyListRemove(p_tcb);
+            OS_CRITICAL_EXIT_NO_SCHED();
+            break;
+
+        case OS_TASK_STATE_DLY:
+            p_tcb->TaskState  = OS_TASK_STATE_DLY_SUSPENDED;
+            p_tcb->SuspendCtr = (OS_NESTING_CTR)1;
+            CPU_CRITICAL_EXIT();
+            break;
+
+        case OS_TASK_STATE_PEND:
+            p_tcb->TaskState  = OS_TASK_STATE_PEND_SUSPENDED;
+            p_tcb->SuspendCtr = (OS_NESTING_CTR)1;
+            CPU_CRITICAL_EXIT();
+            break;
+
+        case OS_TASK_STATE_PEND_TIMEOUT:
+            p_tcb->TaskState  = OS_TASK_STATE_PEND_TIMEOUT_SUSPENDED;
+            p_tcb->SuspendCtr = (OS_NESTING_CTR)1;
+            CPU_CRITICAL_EXIT();
+            break;
+
+        case OS_TASK_STATE_SUSPENDED:
+        case OS_TASK_STATE_DLY_SUSPENDED:
+        case OS_TASK_STATE_PEND_SUSPENDED:
+        case OS_TASK_STATE_PEND_TIMEOUT_SUSPENDED:
+            p_tcb->SuspendCtr++;
+            CPU_CRITICAL_EXIT();
+            break;
+
+        default:
+            CPU_CRITICAL_EXIT();
+            *p_err = OS_ERR_STATE_INVALID;
+            return;
+    }
+
+    /* 任务切换 */
+    OSSched();
+}
+#endif
+
+
+/*$PAGE*/
+/*
+************************************************************************************************************************
+*                                               RESUME A SUSPENDED TASK
+*
+* Description: This function is called to resume a previously suspended task.  This is the only call that will remove an
+*              explicit task suspension.
+*
+* Arguments  : p_tcb      Is a pointer to the task's OS_TCB to resume
+*
+*              p_err      Is a pointer to a variable that will contain an error code returned by this function
+*
+*                             OS_ERR_NONE                  if the requested task is resumed
+*                             OS_ERR_STATE_INVALID         if the task is in an invalid state
+*                             OS_ERR_TASK_RESUME_ISR       if you called this function from an ISR
+*                             OS_ERR_TASK_RESUME_SELF      You cannot resume 'self'
+*                             OS_ERR_TASK_NOT_SUSPENDED    if the task to resume has not been suspended
+*
+* Returns    : none
+************************************************************************************************************************
+*/
+#if OS_CFG_TASK_SUSPEND_EN > 0u
+void  OSTaskResume (OS_TCB  *p_tcb,
+                    OS_ERR  *p_err)
+{
+    CPU_SR_ALLOC();
+
+
+#if 0/* 屏蔽开始 */
+#ifdef OS_SAFETY_CRITICAL
+/* 安全检查，OS_SAFETY_CRITICAL_EXCEPTION()函数需要用户自行编写 */
+if (p_err == (OS_ERR *)0) {
+        OS_SAFETY_CRITICAL_EXCEPTION();
+return;
+    }
+#endif
+
+#if OS_CFG_CALLED_FROM_ISR_CHK_EN > 0u
+/* 不能在ISR程序中调用该函数 */
+if (OSIntNestingCtr > (OS_NESTING_CTR)0) {
+        *p_err = OS_ERR_TASK_RESUME_ISR;
+return;
+    }
+#endif
+
+
+    CPU_CRITICAL_ENTER();
+#if OS_CFG_ARG_CHK_EN > 0u
+/* 不能自己恢复自己 */
+if ((p_tcb == (OS_TCB *)0) ||
+        (p_tcb == OSTCBCurPtr)) {
+        CPU_CRITICAL_EXIT();
+        *p_err = OS_ERR_TASK_RESUME_SELF;
+return;
+    }
+#endif
+
+#endif/* 屏蔽结束 */
+
+    CPU_CRITICAL_ENTER();
+
+    *p_err  = OS_ERR_NONE;
+    /* 根据任务的状态来决定挂起的动作 */
+    switch (p_tcb->TaskState) {
+        case OS_TASK_STATE_RDY:
+        case OS_TASK_STATE_DLY:
+        case OS_TASK_STATE_PEND:
+        case OS_TASK_STATE_PEND_TIMEOUT:
+                CPU_CRITICAL_EXIT();
+                *p_err = OS_ERR_TASK_NOT_SUSPENDED;
+                break;
+        case OS_TASK_STATE_SUSPENDED:
+                // OS_CRITICAL_ENTER_CPU_CRITICAL_EXIT();
+                p_tcb->SuspendCtr--;
+                if (p_tcb->SuspendCtr == (OS_NESTING_CTR)0) {
+                    p_tcb->TaskState = OS_TASK_STATE_RDY;
+                    OS_TaskRdy(p_tcb);
+                }
+                OS_CRITICAL_EXIT_NO_SCHED();
+            break;
+        case OS_TASK_STATE_DLY_SUSPENDED:
+                p_tcb->SuspendCtr--;
+                if (p_tcb->SuspendCtr == (OS_NESTING_CTR)0) {
+                    p_tcb->TaskState = OS_TASK_STATE_DLY;
+                }
+                CPU_CRITICAL_EXIT();
+            break;
+        case OS_TASK_STATE_PEND_SUSPENDED:
+                p_tcb->SuspendCtr--;
+                if (p_tcb->SuspendCtr == (OS_NESTING_CTR)0) {
+                    p_tcb->TaskState = OS_TASK_STATE_PEND;
+                }
+                CPU_CRITICAL_EXIT();
+            break;
+        case OS_TASK_STATE_PEND_TIMEOUT_SUSPENDED:
+                p_tcb->SuspendCtr--;
+                if (p_tcb->SuspendCtr == (OS_NESTING_CTR)0) {
+                    p_tcb->TaskState = OS_TASK_STATE_PEND_TIMEOUT;
+                }
+                CPU_CRITICAL_EXIT();
+            break;
+        default:
+                CPU_CRITICAL_EXIT();
+                *p_err = OS_ERR_STATE_INVALID;
+                return;
+    }
+
+    /* 任务切换 */
+    OSSched();
+}
+#endif
+
+
+/*$PAGE*/
+/*
+************************************************************************************************************************
+*                                                     DELETE A TASK
+*
+* Description: This function allows you to delete a task.  The calling task can delete itself by specifying a NULL
+*              pointer for 'p_tcb'.  The deleted task is returned to the dormant state and can be re-activated by
+*              creating the deleted task again.
+*
+* Arguments  : p_tcb      is the TCB of the tack to delete
+*
+*              p_err      is a pointer to an error code returned by this function:
+*
+*                             OS_ERR_NONE                  if the call is successful
+*                             OS_ERR_STATE_INVALID         if the state of the task is invalid
+*                             OS_ERR_TASK_DEL_IDLE         if you attempted to delete uC/OS-III's idle task
+*                             OS_ERR_TASK_DEL_INVALID      if you attempted to delete uC/OS-III's ISR handler task
+*                             OS_ERR_TASK_DEL_ISR          if you tried to delete a task from an ISR
+*
+* Note(s)    : 1) 'p_err' gets set to OS_ERR_NONE before OSSched() to allow the returned error code to be monitored even
+*                 for a task that is deleting itself. In this case, 'p_err' MUST point to a global variable that can be
+*                 accessed by another task.
+************************************************************************************************************************
+*/
+#if OS_CFG_TASK_DEL_EN > 0u
+void  OSTaskDel (OS_TCB  *p_tcb,
+                OS_ERR  *p_err)
+{
+    CPU_SR_ALLOC();
+
+    /* 不允许删除空闲任务 */
+    if (p_tcb == &OSIdleTaskTCB)
+    {
+        *p_err = OS_ERR_TASK_DEL_IDLE;
+         return;
+    }
+
+    /* 删除自己 */
+    if (p_tcb == (OS_TCB *)0)
+    {
+        CPU_CRITICAL_ENTER();
+        p_tcb  = OSTCBCurPtr;
+        CPU_CRITICAL_EXIT();
+    }
+
+    OS_CRITICAL_ENTER();
+
+    /* 根据任务的状态来决定删除的动作 */
+    switch (p_tcb->TaskState)
+    {
+        case OS_TASK_STATE_RDY:
+            OS_RdyListRemove(p_tcb);
+            break;
+
+        case OS_TASK_STATE_SUSPENDED:
+            break;
+
+        /* 任务只是在延时，并没有在任何等待列表*/
+        case OS_TASK_STATE_DLY:
+        case OS_TASK_STATE_DLY_SUSPENDED:
+            OS_TickListRemove(p_tcb);
+            break;
+
+        case OS_TASK_STATE_PEND:
+        case OS_TASK_STATE_PEND_SUSPENDED:
+        case OS_TASK_STATE_PEND_TIMEOUT:
+        case OS_TASK_STATE_PEND_TIMEOUT_SUSPENDED:
+            OS_TickListRemove(p_tcb);
+        #if 0/* 目前我们还没有实现等待列表，暂时先把这部分代码注释 */
+            /* 看看在等待什么 */
+            switch (p_tcb->PendOn) {
+                case OS_TASK_PEND_ON_NOTHING:
+                /* 任务信号量和队列没有等待队列，直接退出 */
+                case OS_TASK_PEND_ON_TASK_Q:
+                case OS_TASK_PEND_ON_TASK_SEM:
+                    break;
+
+                /* 从等待列表移除 */
+                case OS_TASK_PEND_ON_FLAG:
+                case OS_TASK_PEND_ON_MULTI:
+                case OS_TASK_PEND_ON_MUTEX:
+                case OS_TASK_PEND_ON_Q:
+                case OS_TASK_PEND_ON_SEM:
+                    OS_PendListRemove(p_tcb);
+                    break;
+                default:
+                    break;
+            }
+        #endif
+            break;
+        default:
+            OS_CRITICAL_EXIT();
+            *p_err = OS_ERR_STATE_INVALID;
+            return;
+    }
+
+    /* 初始化TCB为默认值 */
+    OS_TaskInitTCB(p_tcb);
+    /* 修改任务的状态为删除态，即处于休眠 */
+    p_tcb->TaskState = (OS_STATE)OS_TASK_STATE_DEL;
+
+    OS_CRITICAL_EXIT_NO_SCHED();
+    *p_err = OS_ERR_NONE;
+
+    /* 任务切换，寻找最高优先级的任务 */
+    OSSched();
+}
+#endif/* OS_CFG_TASK_DEL_EN > 0u */

@@ -61,6 +61,27 @@
 #define  OS_STATE_OS_STOPPED                    (OS_STATE)(0u)
 #define  OS_STATE_OS_RUNNING                    (OS_STATE)(1u)
 
+/* ---------- 任务的状态 -------*/
+                                                                /* ------------------- TASK STATES ------------------ */
+#define  OS_TASK_STATE_BIT_DLY               (OS_STATE)(0x01u)  /*   /-------- SUSPENDED bit                          */
+                                                                /*   |                                                */
+#define  OS_TASK_STATE_BIT_PEND              (OS_STATE)(0x02u)  /*   | /-----  PEND      bit                          */
+                                                                /*   | |                                              */
+#define  OS_TASK_STATE_BIT_SUSPENDED         (OS_STATE)(0x04u)  /*   | | /---  Delayed/Timeout bit                    */
+                                                                /*   | | |                                            */
+                                                                /*   V V V                                            */
+
+#define  OS_TASK_STATE_RDY                    (OS_STATE)(  0u)  /*   0 0 0     Ready                                  */
+#define  OS_TASK_STATE_DLY                    (OS_STATE)(  1u)  /*   0 0 1     Delayed or Timeout                     */
+#define  OS_TASK_STATE_PEND                   (OS_STATE)(  2u)  /*   0 1 0     Pend                                   */
+#define  OS_TASK_STATE_PEND_TIMEOUT           (OS_STATE)(  3u)  /*   0 1 1     Pend + Timeout                         */
+#define  OS_TASK_STATE_SUSPENDED              (OS_STATE)(  4u)  /*   1 0 0     Suspended                              */
+#define  OS_TASK_STATE_DLY_SUSPENDED          (OS_STATE)(  5u)  /*   1 0 1     Suspended + Delayed or Timeout         */
+#define  OS_TASK_STATE_PEND_SUSPENDED         (OS_STATE)(  6u)  /*   1 1 0     Suspended + Pend                       */
+#define  OS_TASK_STATE_PEND_TIMEOUT_SUSPENDED (OS_STATE)(  7u)  /*   1 1 1     Suspended + Pend + Timeout             */
+#define  OS_TASK_STATE_DEL                    (OS_STATE)(255u)
+
+
 /*
 ========================================================================================================================
 *                                                   OS OBJECT TYPES
@@ -362,6 +383,14 @@ struct os_tcb {
     /* 时间片相关字段 */
     OS_TICK         TimeQuanta;
     OS_TICK         TimeQuantaCtr;
+
+    /* 任务状态相关字段 */
+    OS_STATE             TaskState;
+
+#if OS_CFG_TASK_SUSPEND_EN > 0u
+    /* 任务挂起函数OSTaskSuspend()计数器 */
+    OS_NESTING_CTR       SuspendCtr;
+#endif
 };
 
 
@@ -435,6 +464,19 @@ void  OSTaskCreate (OS_TCB        *p_tcb,
                     CPU_STK_SIZE   stk_size,
                     OS_TICK        time_quanta,
                     OS_ERR        *p_err);
+
+#if OS_CFG_TASK_DEL_EN > 0u
+void          OSTaskDel                 (OS_TCB                *p_tcb,
+                                         OS_ERR                *p_err);
+#endif
+
+#if OS_CFG_TASK_SUSPEND_EN > 0u
+void          OSTaskResume              (OS_TCB                *p_tcb,
+                                         OS_ERR                *p_err);
+
+void          OSTaskSuspend             (OS_TCB                *p_tcb,
+                                         OS_ERR                *p_err);
+#endif
 
 /*$PAGE*/
 /*
