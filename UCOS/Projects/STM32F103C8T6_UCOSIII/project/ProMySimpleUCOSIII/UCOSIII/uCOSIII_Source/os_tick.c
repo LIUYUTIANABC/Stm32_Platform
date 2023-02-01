@@ -133,7 +133,7 @@ void  OS_TickListInsert (OS_TCB *p_tcb,OS_TICK time)
         p_spoke->NbrEntries  = (OS_OBJ_QTY)1u;
     }
     /* 如果插入的不是第一个节点，则按照TickRemain大小升序排列 */
-    else (6)
+    else
     {
         /* 获取第一个节点指针 */
         p_tcb1 = p_spoke->FirstPtr;
