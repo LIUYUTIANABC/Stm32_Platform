@@ -108,7 +108,7 @@ int main(void)
     OSTaskCreate( (OS_TCB*)      &Task3TCB,
                 (OS_TASK_PTR )  Task3,
                 (void *)        0,
-                (OS_PRIO)       2,
+                (OS_PRIO)       3,
                 (CPU_STK*)      &Task3Stk[0],
                 (CPU_STK_SIZE)  TASK3_STK_SIZE,
                 (OS_TICK)       1,
@@ -160,28 +160,42 @@ void cpuIntTest(void)
 /* 任务1 */
 void Task1( void *p_arg )
 {
+    OS_ERR err;
     for ( ;; ) {
+        // LED_BIT_GPIOC_PIN13 = 1;
+        // TimeStart = OS_TS_GET();
+        // OSTimeDly(2);
+        // TimeEnd = OS_TS_GET();
+        // TimeUse = TimeEnd - TimeStart;
+        // LED_BIT_GPIOC_PIN13 = 0;
+        // OSTimeDly(2);
+        // cpuIntTest();
+
         LED_BIT_GPIOC_PIN13 = 1;
-        TimeStart = OS_TS_GET();
-        OSTimeDly(2);
-        TimeEnd = OS_TS_GET();
-        TimeUse = TimeEnd - TimeStart;
+        OSTaskSuspend(&Task1TCB,&err);
         LED_BIT_GPIOC_PIN13 = 0;
-        OSTimeDly(2);
-        cpuIntTest();
+        OSTaskSuspend(&Task1TCB,&err);
     }
 }
 
 /* 任务2 */
 void Task2( void *p_arg )
 {
+    OS_ERR err;
+    u32 i = 0;
     for ( ;; ) {
         LED_BIT_GPIOC_PIN14 = 1;
-        // OSTimeDly(2);
-        delay(0xFF);
+        OSTimeDly(2);
+        // delay(0xFF);
         LED_BIT_GPIOC_PIN14 = 0;
-        // OSTimeDly(2);
-        delay(0xFF);
+        OSTimeDly(2);
+        // delay(0xFF);
+        OSTaskResume(&Task1TCB,&err);
+        if(i++ > 50)
+        {
+            i = 0;
+            OSTaskDel(&Task3TCB,&err);
+        }
     }
 }
 
@@ -189,10 +203,10 @@ void Task3( void *p_arg )
 {
     for ( ;; ) {
         LED_BIT_GPIOC_PIN15 = 1;
-        // OSTimeDly(2);
-        delay(0xFF);
+        OSTimeDly(1);
+        // delay(0xFF);
         LED_BIT_GPIOC_PIN15 = 0;
-        // OSTimeDly(2);
-        delay(0xFF);
+        OSTimeDly(1);
+        // delay(0xFF);
     }
 }

@@ -544,6 +544,10 @@ CPU_STK      *OSTaskStkInit             (OS_TASK_PTR            p_task,
 ************************************************************************************************************************
 */
 
+#if OS_CFG_SCHED_ROUND_ROBIN_EN > 0u
+void          OS_SchedRoundRobin        (OS_RDY_LIST           *p_rdy_list);
+#endif
+
 /* ----------------------------------------------- PRIORITY MANAGEMENT ---------------------------------------------- */
 
 void          OS_PrioInit               (void);
