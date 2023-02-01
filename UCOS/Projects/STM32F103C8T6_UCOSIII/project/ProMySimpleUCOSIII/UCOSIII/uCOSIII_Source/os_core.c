@@ -280,6 +280,7 @@ void  OS_IdleTaskInit (OS_ERR  *p_err)
                 (OS_PRIO)      (OS_CFG_PRIO_MAX - 1u),
                 (CPU_STK*)     OSCfg_IdleTaskStkBasePtr,
                 (CPU_STK_SIZE) OSCfg_IdleTaskStkSize,
+                (OS_TICK)      0,
                 (OS_ERR *)     &p_err);
 }
 
@@ -529,7 +530,7 @@ void  OS_RdyListInsertTail (OS_TCB  *p_tcb)
         p_rdy_list->HeadPtr     = p_tcb;                    /*         Both list pointers point to this OS_TCB        */
         p_rdy_list->TailPtr     = p_tcb;
     } else {                                                /* CASE 1: Insert AFTER the current tail of list          */
-        /* CASE 0: 链表是空链表 */
+        /* CASE 1: 链表已有节点 */
         p_rdy_list->NbrEntries++;                           /*         One more OS_TCB in the list                    */
         p_tcb->NextPtr          = (OS_TCB   *)0;            /*         Adjust new OS_TCBs links                       */
         p_tcb2                  = p_rdy_list->TailPtr;
@@ -725,6 +726,77 @@ void  OS_RdyListRemove (OS_TCB  *p_tcb)
     p_tcb->PrevPtr = (OS_TCB *)0;
     p_tcb->NextPtr = (OS_TCB *)0;
 }
+
+
+/*$PAGE*/
+/*
+************************************************************************************************************************
+*                                        RUN ROUND-ROBIN SCHEDULING ALGORITHM
+*
+* Description: This function is called on every tick to determine if a new task at the same priority needs to execute.
+*
+*
+* Arguments  : p_rdy_list    is a pointer to the OS_RDY_LIST entry of the ready list at the current priority
+*              ----------
+*
+* Returns    : none
+*
+* Note(s)    : 1) This function is INTERNAL to uC/OS-III and your application MUST NOT call it.
+************************************************************************************************************************
+*/
+
+#if OS_CFG_SCHED_ROUND_ROBIN_EN > 0u
+void  OS_SchedRoundRobin (OS_RDY_LIST  *p_rdy_list)
+{
+    OS_TCB   *p_tcb;
+    CPU_SR_ALLOC();
+
+    /*  进入临界段 */
+    CPU_CRITICAL_ENTER();
+    p_tcb = p_rdy_list->HeadPtr;                            /* Decrement time quanta counter                          */
+
+    /* 如果TCB节点为空，则退出 */
+    if (p_tcb == (OS_TCB *)0) {
+        CPU_CRITICAL_EXIT();
+        return;
+    }
+
+    /* 如果是空闲任务，也退出 */
+    if (p_tcb == &OSIdleTaskTCB) {
+        CPU_CRITICAL_EXIT();
+        return;
+    }
+
+    /* 时间片自减 */
+    if (p_tcb->TimeQuantaCtr > (OS_TICK)0) {
+        p_tcb->TimeQuantaCtr--;
+    }
+
+    /* 时间片没有用完，则退出 */
+    if (p_tcb->TimeQuantaCtr > (OS_TICK)0) {                /* Task not done with its time quanta                     */
+        CPU_CRITICAL_EXIT();
+        return;
+    }
+
+    /* 如果当前优先级只有一个任务，则退出 */
+    if (p_rdy_list->NbrEntries < (OS_OBJ_QTY)2) {           /* See if it's time to time slice current task            */
+        CPU_CRITICAL_EXIT();                                /* ... only if multiple tasks at same priority            */
+        return;
+    }
+
+    /* 时间片耗完，将任务放到链表的最后一个节点 */
+    OS_RdyListMoveHeadToTail(p_rdy_list);                   /* Move current OS_TCB to the end of the list             */
+
+    /* 重新获取任务节点 */
+    p_tcb = p_rdy_list->HeadPtr;                            /* Point to new OS_TCB at head of the list                */
+
+    /* 重载默认的时间片计数值 */
+    p_tcb->TimeQuantaCtr = p_tcb->TimeQuanta;
+
+    /* 退出临界段 */
+    CPU_CRITICAL_EXIT();
+}
+#endif
 
 /*$PAGE*/
 /*

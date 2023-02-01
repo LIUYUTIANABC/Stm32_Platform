@@ -358,6 +358,10 @@ struct os_tcb {
 
     OS_TICK         TickCtrMatch;
     OS_TICK         TickRemain;
+
+    /* 时间片相关字段 */
+    OS_TICK         TimeQuanta;
+    OS_TICK         TimeQuantaCtr;
 };
 
 
@@ -429,6 +433,7 @@ void  OSTaskCreate (OS_TCB        *p_tcb,
                     OS_PRIO        prio,
                     CPU_STK       *p_stk_base,
                     CPU_STK_SIZE   stk_size,
+                    OS_TICK        time_quanta,
                     OS_ERR        *p_err);
 
 /*$PAGE*/

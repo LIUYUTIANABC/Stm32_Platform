@@ -164,6 +164,11 @@ void  OSTimeTick (void)
     /* 更新时基列表 */
     OS_TickListUpdate();
 
+#if OS_CFG_SCHED_ROUND_ROBIN_EN > 0u
+    /* 时间片调度 */
+    OS_SchedRoundRobin(&OSRdyList[OSPrioCur]);
+#endif
+
     /* 任务调度 */
     OSSched();
 }

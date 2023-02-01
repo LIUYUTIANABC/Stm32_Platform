@@ -93,6 +93,7 @@ int main(void)
                 (OS_PRIO)      1,
                 (CPU_STK*)     &Task1Stk[0],
                 (CPU_STK_SIZE) TASK1_STK_SIZE,
+                (OS_TICK)      0,
                 (OS_ERR *)     &err);
 
     OSTaskCreate ((OS_TCB*)      &Task2TCB,
@@ -101,14 +102,16 @@ int main(void)
                 (OS_PRIO)      2,
                 (CPU_STK*)     &Task2Stk[0],
                 (CPU_STK_SIZE) TASK2_STK_SIZE,
+                (OS_TICK)      1,
                 (OS_ERR *)     &err);
 
     OSTaskCreate( (OS_TCB*)      &Task3TCB,
                 (OS_TASK_PTR )  Task3,
                 (void *)        0,
-                (OS_PRIO)       3,
+                (OS_PRIO)       2,
                 (CPU_STK*)      &Task3Stk[0],
                 (CPU_STK_SIZE)  TASK3_STK_SIZE,
+                (OS_TICK)       1,
                 (OS_ERR *)      &err );
 
 #if 0
@@ -174,9 +177,11 @@ void Task2( void *p_arg )
 {
     for ( ;; ) {
         LED_BIT_GPIOC_PIN14 = 1;
-        OSTimeDly(2);
+        // OSTimeDly(2);
+        delay(0xFF);
         LED_BIT_GPIOC_PIN14 = 0;
-        OSTimeDly(2);
+        // OSTimeDly(2);
+        delay(0xFF);
     }
 }
 
@@ -184,8 +189,10 @@ void Task3( void *p_arg )
 {
     for ( ;; ) {
         LED_BIT_GPIOC_PIN15 = 1;
-        OSTimeDly(2);
+        // OSTimeDly(2);
+        delay(0xFF);
         LED_BIT_GPIOC_PIN15 = 0;
-        OSTimeDly(2);
+        // OSTimeDly(2);
+        delay(0xFF);
     }
 }

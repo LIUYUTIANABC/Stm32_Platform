@@ -120,6 +120,7 @@ void  OSTaskCreate (OS_TCB        *p_tcb,
                     OS_PRIO        prio,
                     CPU_STK       *p_stk_base,
                     CPU_STK_SIZE   stk_size,
+                    OS_TICK       time_quanta,
                     OS_ERR        *p_err)
 {
     CPU_STK       *p_sp;
@@ -140,6 +141,12 @@ void  OSTaskCreate (OS_TCB        *p_tcb,
     p_tcb->StkPtr        = p_sp;                            /* Save the new top-of-stack pointer                      */
     p_tcb->StkSize       = stk_size;                        /* Save the stack size (in number of CPU_STK elements)    */
     p_tcb->TaskDelayTicks = 0;
+
+    /* 时间片相关初始化 */
+    p_tcb->TimeQuanta    = time_quanta;
+#if OS_CFG_SCHED_ROUND_ROBIN_EN > 0u
+    p_tcb->TimeQuantaCtr = time_quanta;
+#endif
 
     /* 进入临界段 */
     OS_CRITICAL_ENTER();
