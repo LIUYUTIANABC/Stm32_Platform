@@ -69,7 +69,10 @@ CPU_STK  *OSTaskStkInit (OS_TASK_PTR    p_task,
     /* 异常发生时自动保存的寄存器 */
     /* *--p_stk == *(--p_stk)  STM32 中使用的是满减栈， */
     /* 其他还有满增栈，空减栈，空增栈  */
-    *--p_stk = (CPU_STK)0x01000000u;    /* xPSR的bit24必须置1  */
+    *--p_stk = (CPU_STK)0x01000000u;    /* xPSR的bit24必须置1; */
+                                        /* 其中bit24被置1，表示使用Thumb指令； */
+                                        /* 寄存器 PC 被初始化为任务函数指针 vTask_A，这样当某次任务切换后，任务 A 控制 CPU 的控制权
+                                           任务 vTask_A 被出栈到 PC 寄存器，之后会执行任务 A 的代码*/
     *--p_stk = (CPU_STK)p_task;         /* R15(PC)任务的入口地址*/
     *--p_stk = (CPU_STK)0x14141414u;    /* R14 (LR)            */
     *--p_stk = (CPU_STK)0x12121212u;    /* R12                 */
